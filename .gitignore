@@ -1,0 +1,6 @@
+ImageContrast/.vs/*
+ImageContrast/Debug/*
+ImageContrast/x64/*
+ImageContrast/ImageContrast/*.lib
+ImageContrast/ImageContrast/x64/*
+ImageContrast/ImageContrast/Debug/*
