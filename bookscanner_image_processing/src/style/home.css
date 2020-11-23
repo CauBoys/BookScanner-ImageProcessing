@@ -27,6 +27,10 @@
   border-radius: 8px;
 }
 
+.AddButton-Card {
+  background-color: gray;
+}
+
 .Body-Container {
   display: flex;
   flex-flow: row wrap;
@@ -36,7 +40,6 @@
 .Card {
   display: flex;
   flex-direction: column;
-
   width: 16em;
   height: 20em;
   margin: 20px;
@@ -47,15 +50,20 @@
   align-items: center;
   justify-content: center;
 }
-
+.Card-Add {
+  background-color: gray;
+  border-color: gray;
+}
 .Card-Image {
-  flex: 5;
+  width: 200px;
 }
 
 .Card-Body {
+  display: flex;
   flex: 2;
-
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .Slider-Container {
@@ -71,4 +79,9 @@
 
 .Slider {
   flex: 2;
+}
+
+.Next-Button {
+  display: flex;
+  flex: 1;
 }
