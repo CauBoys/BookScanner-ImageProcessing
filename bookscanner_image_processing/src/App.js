@@ -6,9 +6,9 @@ import {
   Switch,
   BrowserRouter as Router,
 } from 'react-router-dom'
-import Home from './pages/home'
-import intro from './pages/intro'
-import detail from './pages/detail'
+import Home from './pages/home-page'
+import intro from './pages/intro-page'
+import detail from './pages/detail-page'
 import './App.css'
 
 function App() {
