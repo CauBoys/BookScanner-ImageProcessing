@@ -1,0 +1,74 @@
+.Container {
+  display: flex;
+  flex-flow: column wrap;
+  margin: 30px;
+  margin-left: 100px;
+}
+
+.Header {
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  align-items: center;
+}
+.Title {
+  flex: 1;
+  font-size: 6em;
+}
+
+.AddButton {
+  justify-content: flex-end;
+  width: 10em;
+  height: 5em;
+  margin-right: 100px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #50b4f5;
+  border-radius: 8px;
+}
+
+.Body-Container {
+  display: flex;
+  flex-flow: row wrap;
+  margin-top: 100px;
+}
+
+.Card {
+  display: flex;
+  flex-direction: column;
+
+  width: 16em;
+  height: 20em;
+  margin: 20px;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 8px;
+  background-color: white;
+  align-items: center;
+  justify-content: center;
+}
+
+.Card-Image {
+  flex: 5;
+}
+
+.Card-Body {
+  flex: 2;
+
+  flex-direction: column;
+}
+
+.Slider-Container {
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  color: black;
+}
+
+.Slider-Title {
+  flex: 1;
+}
+
+.Slider {
+  flex: 2;
+}
