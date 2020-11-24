@@ -1,24 +1,46 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useCallback } from 'react'
 import { NextButtons } from '../components/nextButton'
 import { Button, Card, ProgressBar } from 'react-bootstrap'
 import { FaPlusCircle } from 'react-icons/fa'
 import 'react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css'
 import RangeSlider from 'react-bootstrap-range-slider'
 import testImg from '../assets/logo.png'
+import { useSelector, useDispatch, shallowEqual } from 'react-redux'
+import { imageUpload, imageDelete } from '../modules/image'
 import '../style/home.css'
 
 export default function Home() {
+  const [imageList, setImageList] = useState()
   const [image, setImage] = useState()
+  const [imageBase64, setImageBase64] = useState('')
   const [contrastValue, setContrastValue] = useState(0)
   const hiddenFileInput = useRef(null)
+  const imageStore = useSelector((state) => state.image.imageFile)
+  const dispatch = useDispatch()
+
+  const imgUpload = useCallback(() => dispatch(imageUpload()), [dispatch])
+  const imgDelete = useCallback(() => dispatch(imageDelete()), [dispatch])
 
   const handleClick = (event) => {
     hiddenFileInput.current.click()
   }
+
+  console.log(imageStore)
+
   const handleChange = (event) => {
-    const fileUploaded = event.target.files[0]
-    setImage(fileUploaded)
+    let reader = new FileReader()
+    reader.onloadend = () => {
+      const base64 = reader.result
+      if (base64) {
+        setImageBase64(base64.toString())
+      }
+    }
+    if (event.target.files[0]) {
+      reader.readAsDataURL(event.target.files[0])
+      setImage(event.target.files[0])
+    }
   }
+
   return (
     <div className="Container">
       <div className="Header">
