@@ -1,0 +1,87 @@
+.Container {
+  display: flex;
+  flex-flow: column wrap;
+  margin: 30px;
+  margin-left: 100px;
+}
+
+.Header {
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  align-items: center;
+}
+.Title {
+  flex: 1;
+  font-size: 6em;
+}
+
+.AddButton {
+  justify-content: flex-end;
+  width: 10em;
+  height: 5em;
+  margin-right: 100px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #50b4f5;
+  border-radius: 8px;
+}
+
+.AddButton-Card {
+  background-color: gray;
+}
+
+.Body-Container {
+  display: flex;
+  flex-flow: row wrap;
+  margin-top: 100px;
+}
+
+.Card {
+  display: flex;
+  flex-direction: column;
+  width: 16em;
+  height: 20em;
+  margin: 20px;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 8px;
+  background-color: white;
+  align-items: center;
+  justify-content: center;
+}
+.Card-Add {
+  background-color: gray;
+  border-color: gray;
+}
+.Card-Image {
+  width: 200px;
+}
+
+.Card-Body {
+  display: flex;
+  flex: 2;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.Slider-Container {
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  color: black;
+}
+
+.Slider-Title {
+  flex: 1;
+}
+
+.Slider {
+  flex: 2;
+}
+
+.Next-Button {
+  display: flex;
+  flex: 1;
+}
