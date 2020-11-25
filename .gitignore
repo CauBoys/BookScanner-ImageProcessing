@@ -11,3 +11,10 @@ ImageAdd/x64/*
 ImageAdd/ImageAdd/*.lib
 ImageAdd/ImageAdd/x64/*
 ImageAdd/ImageAdd/Debug/*
+
+scaling/.vs/*
+scaling/Debug/*
+scaling/x64/*
+scaling/scaling/.vs/*
+scaling/scaling/Debug/*
+scaling/scaling/x64/*
