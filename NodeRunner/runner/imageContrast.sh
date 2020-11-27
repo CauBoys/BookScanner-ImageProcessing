@@ -1,1 +1,1 @@
-echo hello
+./imageContrast.exe $1 $2

@@ -1,1 +1,1 @@
-echo hello
+./imageAdd.exe $1 $2
