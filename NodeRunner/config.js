@@ -1,5 +1,5 @@
 var fileList = {
-    imageUpload: "./upload",
+    imageUpload: "./upload/",
     imageRunQueue: "./upload/runQueue.json"
 };
 
