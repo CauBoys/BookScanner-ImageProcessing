@@ -16,23 +16,25 @@ int grayAt(Mat img, int x, int y);
 int imgAt(Mat img, int x, int y, int c);
 void setAt(Mat img, int x, int y, int c, int value);
 
-int main(void) {
-	Mat img = imread("imgex.jpg", IMREAD_COLOR);
+int main(int argc, char* argv[]) {
+	if (argc != 3) {
+		printf("args not profit.\n");
+		return 0;
+	}
+
+	char* inputFile = argv[1];
+	char* saveFile = argv[2];
+
+	Mat img = imread(inputFile, IMREAD_COLOR);
 	
 	int height = img.rows;
 	int width = img.cols;
 
-	Mat dst;
-
 	Mat img_higher_contrast = Mat::zeros(height, width, CV_8UC3);
 	// We can get contrasted image with adjusting alpha value ( which need to be over 1 ).
 	contrast(img, img_higher_contrast, 1.15);
-	// equalizeHist(img, img_higher_contrast);
-	//img.convertTo(img_higher_contrast, -1, 1.5, 0);
 
-	resize(img_higher_contrast, dst, Size(int(width / DIV_NUM), int(height / DIV_NUM)), 0, 0, INTER_LINEAR);
-	imshow("예시 파일", dst);
-	waitKey();
+	imwrite(saveFile, img_higher_contrast);
 	return 0;
 }
 

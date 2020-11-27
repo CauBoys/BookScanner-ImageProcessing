@@ -24,18 +24,15 @@ router.post('/cut', (req, res, next) => {
 router.post('/find', (req, res, next) => {
     var uuid = getUUID();
     var imageFile = req.body.imageFile; // TODO : Change real image name.
+    // Find Image 는 조금 다른데, 결과로 uuid 를 알려주는게 아니라 결과로 true 만 보내고, 나중에 작업 끝났을때 요청시 알려주는 방식으로 해야할듯.
+
     fileIO.jobAttacher(imageFile, "find", uuid)
     .then(() => {
-        res.json({
-            result: true,
-            uuid: uuid
-        });
+        res.json({ result: true });
     })
     .catch((err) => {
         console.log(err);
-        res.json({
-            result: false
-        });
+        res.json({ result: false });
     });
 });
 

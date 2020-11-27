@@ -15,21 +15,24 @@ int imgAt(Mat img, int x, int y, int c);
 int imgAtAlpha(Mat img, int x, int y, int c);
 void setAt(Mat img, int x, int y, int c, int value);
 
-int main() {
-	Mat img = imread("imgex.jpg", IMREAD_COLOR);
+int main(int argc, char * argv[]) {
+	if (argc != 3) {
+		printf("args not profit.\n");
+		return 0;
+	}
+
+	char* inputFile = argv[1];
+	char* saveFile = argv[2];
+
+	Mat img = imread(inputFile, IMREAD_COLOR);
 	Mat addImg = imread("cowboys.png", IMREAD_UNCHANGED);	// Alpha Value Image need to read with IMREAD_UNCHANGED.
 	int height = img.rows;
 	int width = img.cols;
-	Mat dst = Mat::zeros(int(height / DIV_NUM), int(width / DIV_NUM), CV_8UC3);
-	Mat resizedImg;
+	Mat dst = Mat::zeros(height, width, CV_8UC3);
 
-	resize(img, resizedImg, Size(int(width / DIV_NUM), int(height / DIV_NUM)), 0, 0, INTER_LINEAR);
+	imageAddCenter(img, addImg, dst);
+	imwrite(saveFile, dst);
 
-	imageAddCenter(resizedImg, addImg, dst);
-
-	
-	imshow("예시 파일", dst);
-	waitKey();
 	return 0;
 }
 

@@ -1,5 +1,6 @@
 const express = require('express');
 const config = require('../config');
+const fileIO = require('../utils/fileIO');
 const router = express.Router();
 
 router.get('/isFinish/:uuid', (req, res, next) => {
@@ -11,10 +12,31 @@ router.get('/isFinish/:uuid', (req, res, next) => {
     });
 });
 
+router.get('/findIsFinish/:baseName', (req, res, next) => {
+    // find 작업은 이런식으로 작업이 끝났는지 물어봐야함.
+    var uuid = req.params.baseName;
+    fileIO.jobEndSearcher(baseName)
+    .then((result) => {
+        if(result.end) {
+            res.json({
+                result: true, 
+                files: result.files
+            });
+        }
+        else {
+            res.json({result: false});
+        }
+    })
+    .catch((err) => {
+        console.log(err);
+        res.json({result: false});
+    })
+});
+
 router.get('/download/:uuid', (req, res, next) => {
     var uuid = req.params.uuid;
     var fileName = config.fileList.imageUpload + uuid + ".jpg";4
     // TODO : Send Image Code.
-})
+});
 
 module.exports = router;
