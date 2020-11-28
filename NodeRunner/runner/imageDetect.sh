@@ -1,1 +1,1 @@
-echo hello
+./runner/PictureExtraction.exe $1 $2

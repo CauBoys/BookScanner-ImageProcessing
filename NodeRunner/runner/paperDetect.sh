@@ -1,0 +1,1 @@
+./runner/scaling.exe $1 $2
