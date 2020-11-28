@@ -11,9 +11,7 @@ const storage = multer.diskStorage({
     },
 });
 
-const upload = multer({
-    storage: storage
-});
+const upload = multer({ storage: storage });
 
 router.post('/cut', upload.single("img"), (req, res, next) => {
     var uuid = getUUID();
@@ -69,6 +67,23 @@ router.post('/blur',  upload.single("img"), (req, res, next) => {
     var uuid = getUUID();
     var outputFileName = config.fileList.imageUpload + uuid + ".jpg";
     var inputFileName = config.fileList.imageUpload + req.file.filename;
+    var coord = [req.body.startX, req.body.startY, req.body.endX, req.body.endY]
+
+    nodeRunner.imageBlur(inputFileName, outputFileName, coord[0], coord[1], coord[2], coord[3]).then((stdout) => {
+        res.json({
+            result: true,
+            fileName: uuid
+        });
+    })
+    .catch((err) => {
+        console.log(err);
+    });
+});
+
+router.post('/deletion',  upload.single("img"), (req, res, next) => {
+    var uuid = getUUID();
+    var outputFileName = config.fileList.imageUpload + uuid + ".jpg";
+    var inputFileName = config.fileList.imageUpload + req.file.filename;
     var coord = [req.body.startX, req.body.startY, req.body.endX, req.body.endY, req.body.backX, req.body.backY]
 
     nodeRunner.imageBlur(inputFileName, outputFileName, coord[0], coord[1], coord[2], coord[3], coord[4], coord[5]).then((stdout) => {
@@ -81,6 +96,7 @@ router.post('/blur',  upload.single("img"), (req, res, next) => {
         console.log(err);
     });
 });
+
 
 router.post('/add',  upload.single("img"), (req, res, next) => {
     var uuid = getUUID();

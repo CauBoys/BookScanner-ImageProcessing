@@ -25,12 +25,12 @@ int main(int argc, char * argv[]) {
 	char* saveFile = argv[2];
 
 	Mat img = imread(inputFile, IMREAD_COLOR);
-	Mat addImg = imread("cowboys.png", IMREAD_UNCHANGED);	// Alpha Value Image need to read with IMREAD_UNCHANGED.
+	Mat addImg = imread("./runner/cowboys.png", IMREAD_UNCHANGED);	// Alpha Value Image need to read with IMREAD_UNCHANGED.
 	int height = img.rows;
 	int width = img.cols;
 	Mat dst = Mat::zeros(height, width, CV_8UC3);
 
-	imageAddCenter(img, addImg, dst);
+	imageAddTo(img, addImg, dst, width - addImg.cols - 40, height - addImg.rows - 40);
 	imwrite(saveFile, dst);
 
 	return 0;
