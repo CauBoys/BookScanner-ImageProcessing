@@ -65,9 +65,9 @@ function imageDetect(sourceFile) {
     });
 }
 
-function imageBlur(sourceFile, uuid, startX, startY, endX, endY, backX, backY) {
+function imageDeletion(sourceFile, uuid, startX, startY, endX, endY, backX, backY)  {
     return new Promise((res, rej) => {
-        runShell('sh runner/imageBlur.sh ' + sourceFile + " " + uuid  + " " + String(startX) + " " + String(startY) + " " + String(endX) + " " + String(endY) + " " + String(backX) + " " + String(backY) + " ").
+        runShell('sh runner/imageDeletion.sh ' + sourceFile + " " + uuid  + " " + String(startX) + " " + String(startY) + " " + String(endX) + " " + String(endY) + " " + String(backX) + " " + String(backY) + " ").
         then((stdout) => {
             res(stdout);
         }).
@@ -77,4 +77,28 @@ function imageBlur(sourceFile, uuid, startX, startY, endX, endY, backX, backY) {
     });
 }
 
-module.exports = { addWaterMark, imageContrast, paperDetect, imageDetect, imageBlur }
+function imageBlur(sourceFile, uuid, startX, startY, endX, endY, value) {
+    return new Promise((res, rej) => {
+        runShell('sh runner/imageBlur.sh ' + sourceFile + " " + uuid  + " " + String(startX) + " " + String(startY) + " " + String(endX) + " " + String(endY) + " " + String(value)).
+        then((stdout) => {
+            res(stdout);
+        }).
+        catch((err) => {
+            rej(err);
+        })
+    });
+}
+
+function imageMosiac(sourceFile, uuid, startX, startY, endX, endY) {
+    return new Promise((res, rej) => {
+        runShell('sh runner/imageMosiac.sh ' + sourceFile + " " + uuid  + " " + String(startX) + " " + String(startY) + " " + String(endX) + " " + String(endY) + " " + String(value)).
+        then((stdout) => {
+            res(stdout);
+        }).
+        catch((err) => {
+            rej(err);
+        })
+    });
+}
+
+module.exports = { addWaterMark, imageContrast, paperDetect, imageDetect, imageDeletion, imageBlur, imageMosiac }
