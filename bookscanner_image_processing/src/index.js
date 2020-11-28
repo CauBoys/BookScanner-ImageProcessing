@@ -5,9 +5,13 @@ import App from './App'
 import { createStore, applyMiddleware } from 'redux'
 import { Provider as StoreProvider } from 'react-redux'
 import ReduxThunk from 'redux-thunk'
+import { composeWithDevTools } from 'redux-devtools-extension'
 import rootReducer from './modules/index'
 
-const store = createStore(rootReducer, applyMiddleware(ReduxThunk))
+const store = createStore(
+  rootReducer,
+  composeWithDevTools(applyMiddleware(ReduxThunk))
+)
 
 ReactDOM.render(
   <React.StrictMode>
