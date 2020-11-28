@@ -18,3 +18,10 @@ scaling/x64/*
 scaling/scaling/.vs/*
 scaling/scaling/Debug/*
 scaling/scaling/x64/*
+
+PictureExtraction/.vs/*
+PictureExtraction/Debug/*
+PictureExtraction/x64/*
+PictureExtraction/PictureExtraction/.vs/*
+PictureExtraction/PictureExtraction/Debug/*
+PictureExtraction/PictureExtraction/x64/*
