@@ -14,17 +14,23 @@ export default function Home() {
   const [imageList, setImageList] = useState()
   const [image, setImage] = useState([
     {
-      file: '',
+      img: '',
       id: 0,
       type_process: 'O',
       type_id: 0,
       selectRectZone: {
-        xMin: 0,
-        yMin: 0,
-        xMax: 0,
-        yMax: 0,
+        startX: 0,
+        startY: 0,
+        endX: 0,
+        endY: 0,
       },
-      url: '',
+      backgroundZone: {
+        backX: 0,
+        backY: 0,
+      },
+      contrast: {
+        value: 0,
+      },
     },
   ])
   const [contrastValue, setContrastValue] = useState([])
@@ -55,7 +61,7 @@ export default function Home() {
     let file = event.target.files[0]
     reader.onloadend = () => {
       let newArr = DEEP_CLONE(image)
-      newArr[0].file = file
+      newArr[0].img = file
       newArr[0].id = nextId.current
       newArr[0].url = reader.result
       setImage(newArr)

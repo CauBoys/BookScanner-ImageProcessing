@@ -11,34 +11,29 @@ const IMAGE_PROCESSING_RESTORE = 'image/IMAGE_PROCESSING_RESTORE'
 export const imageDelete = (id) => ({ type: IMAGE_DELETE, id }) // 해당 id값을 가진 사진 전부 삭제
 //Thunk
 export const imageUpload = (image) => async (dispatch, getState) => {
-  // const res = await fetch({ BASE_URL } + '/upload', {
-  //   method: 'POST',
-  //   mode: 'cors',
-  //   headers: {
-  //     'Content-type': 'application/json',
-  //   },
-  //   body: JSON.stringify({
-  //     base64: image,
-  //   }),
-  // })
-  // const json = await res.json()
-  // console.log(json)
+  var formdata = new FormData()
+  formdata.append('img', image[0].img)
+
+  var requestOptions = {
+    method: 'POST',
+    body: formdata,
+  }
+
+  fetch(BASE_URL + 'ip/add', requestOptions)
+    .then((response) => response.json())
+    .then((result) => console.log(result))
+    .catch((error) => console.log('error', error))
+
+  // fetch(BASE_URL + `file/download/bf69-b96a-822b-f814-33c5`)
+  //   .then((response) => response.blob())
+  //   .then((blob) => {
+  //     console.log(blob)
+  //   })
+
   dispatch({ type: IMAGE_UPLOAD, image })
 }
 
 export const getImage = () => async (dispatch, getState) => {
-  // const res = await fetch({ BASE_URL } + '/upload', {
-  //   method: 'POST',
-  //   mode: 'cors',
-  //   headers: {
-  //     'Content-type': 'application/json',
-  //   },
-  //   body: JSON.stringify({
-  //     base64: image,
-  //   }),
-  // })
-  // const json = await res.json()
-  // console.log(json)
   dispatch({ type: GET_IMAGE, image })
 }
 
