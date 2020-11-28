@@ -25,6 +25,23 @@ export const imageUpload = (image) => async (dispatch, getState) => {
   // console.log(json)
   dispatch({ type: IMAGE_UPLOAD, image })
 }
+
+export const getImage = () => async (dispatch, getState) => {
+  // const res = await fetch({ BASE_URL } + '/upload', {
+  //   method: 'POST',
+  //   mode: 'cors',
+  //   headers: {
+  //     'Content-type': 'application/json',
+  //   },
+  //   body: JSON.stringify({
+  //     base64: image,
+  //   }),
+  // })
+  // const json = await res.json()
+  // console.log(json)
+  dispatch({ type: GET_IMAGE, image })
+}
+
 export const processMosaic = (image) => async (dispatch, getState) => {
   //모자이크 처리, c++로 image 정보 넘기고 결과를 다시 받아야함
   // const result = mosaicImage(image)
@@ -138,6 +155,10 @@ export default function image(state = initialState, action) {
         ...state,
         // imageFile: [...state.imageFile, action.image],
         imageFile: state.imageFile.concat(action.image),
+      }
+    case GET_IMAGE:
+      return {
+        ...state,
       }
     case IMAGE_DELETE:
       return {

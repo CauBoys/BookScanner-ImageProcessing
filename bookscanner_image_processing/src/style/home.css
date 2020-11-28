@@ -85,3 +85,9 @@
   display: flex;
   flex: 1;
 }
+
+.Header-Second {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}

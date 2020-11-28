@@ -27,7 +27,7 @@ export default function Home() {
       url: '',
     },
   ])
-  const [contrastValue, setContrastValue] = useState(0)
+  const [contrastValue, setContrastValue] = useState([])
   const hiddenFileInput = useRef(null)
   const nextId = useRef(0)
   const imageStore = useSelector((state) => state.image.imageFile)
@@ -59,24 +59,37 @@ export default function Home() {
       newArr[0].id = nextId.current
       newArr[0].url = reader.result
       setImage(newArr)
+      let newValue = {
+        id: nextId.current,
+        value: 0,
+      }
+      setContrastValue((oldArray) => [...oldArray, newValue])
     }
     reader.readAsDataURL(file)
   }
 
   const cardList = (imageStore) => {
-    return imageStore.map((item) => {
+    return imageStore.map((item, id) => {
       return (
-        <Card className="Card">
+        <Card className="Card" id={id}>
           <Card.Img className="Card-Image" variant="top" src={item.url} />
           <Card.Body className="Card-Body">
             <div className="Slider-Container">
               <div className="Slider-Title">contrast</div>
               <div className="Slider">
                 <RangeSlider
-                  value={contrastValue}
-                  onChange={(changeEvent) =>
-                    setContrastValue(changeEvent.target.value)
-                  }
+                  value={contrastValue[nextId.current]}
+                  onChange={(changeEvent) => {
+                    setContrastValue(
+                      contrastValue.map((item) =>
+                        item.id === id + 1
+                          ? { ...item, value: changeEvent.target.value }
+                          : item
+                      )
+                    )
+
+                    console.log(contrastValue)
+                  }}
                 />
               </div>
             </div>
@@ -93,9 +106,9 @@ export default function Home() {
     <div className="Container">
       <div className="Header">
         <h1 className="Title">Image List</h1>
-        <Button variant="primary" className="AddButton">
+        {/* <Button variant="primary" className="AddButton">
           <FaPlusCircle size={20} />
-        </Button>
+        </Button> */}
       </div>
       <div className="Body-Container">
         {cardList(imageStore)}
@@ -117,6 +130,10 @@ export default function Home() {
             />
           </Card.Body>
         </Card>
+      </div>
+      <div className="Header-Second">
+        <h1 className="Title">Auto Cropped Image</h1>
+        <h2 className="SubTitle">Click Image to link page</h2>
       </div>
     </div>
   )
