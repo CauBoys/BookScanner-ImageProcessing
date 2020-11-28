@@ -1,4 +1,4 @@
-export const BASE_URL = 'http://localhost:5000/image'
+export const BASE_URL = 'http://192.168.35.163:46000/'
 
 export const DEEP_CLONE = (obj) => {
   if (obj === null || typeof obj !== 'object') {
