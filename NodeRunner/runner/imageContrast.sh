@@ -1,1 +1,1 @@
-./imageContrast.exe $1 $2
+./runner/ImageContrast.exe $1 $2 $3

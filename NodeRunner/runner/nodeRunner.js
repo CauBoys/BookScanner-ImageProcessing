@@ -27,9 +27,9 @@ function addWaterMark(sourceFile, uuid) {
     });
 }
 
-function imageContrast(sourceFile, uuid) {
+function imageContrast(sourceFile, uuid, value) {
     return new Promise((res, rej) => {
-        runShell('sh runner/imageContrast.sh ' + sourceFile + " " + uuid).
+        runShell('sh runner/imageContrast.sh ' + sourceFile + " " + uuid + " " + value).
         then((stdout) => {
             res(stdout);
         }).

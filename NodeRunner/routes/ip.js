@@ -50,10 +50,11 @@ router.post('/find', upload.single("img"), (req, res, next) => {
 
 router.post('/contrast',  upload.single("img"), (req, res, next) => {
     var uuid = getUUID();
+    var value = req.body.value;
     var outputFileName = config.fileList.imageUpload + uuid + ".jpg";
     var inputFileName = config.fileList.imageUpload + req.file.filename;
 
-    nodeRunner.imageContrast(inputFileName, outputFileName).then((stdout) => {
+    nodeRunner.imageContrast(inputFileName, outputFileName, value).then((stdout) => {
         res.json({
             result: true,
             fileName: uuid
