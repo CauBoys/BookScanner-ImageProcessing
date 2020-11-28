@@ -116,7 +116,6 @@ router.post('/deletion',  upload.single("img"), (req, res, next) => {
     });
 });
 
-
 router.post('/add',  upload.single("img"), (req, res, next) => {
     var uuid = getUUID();
     var outputFileName = config.fileList.imageUpload + uuid + ".jpg";
@@ -139,6 +138,5 @@ function getUUID() {
         return v.toString(16);
     });
 }
-
 
 module.exports = router;
