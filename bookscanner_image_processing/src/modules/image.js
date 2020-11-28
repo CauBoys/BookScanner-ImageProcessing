@@ -2,39 +2,51 @@ import { BASE_URL } from '../common/common'
 //Action Type
 const IMAGE_UPLOAD = 'image/IMAGE_UPLOAD'
 const IMAGE_DELETE = 'image/IMAGE_DELETE'
-const GET_IMAGE = 'image/GET_IMAGE'
 const IMAGE_PROCESSING_MOSAIC = 'image/IMAGE_PROCESSING_MOSAIC'
 const IMAGE_PROCESSING_BLUR = 'image/IMAGE_PROCESSING_BLUR'
 const IMAGE_PROCESSING_DELETEION = 'image/IMAGE_PROCESSING_DELETION'
 const IMAGE_PROCESSING_RESTORE = 'image/IMAGE_PROCESSING_RESTORE'
+const ADD_WATERMARK = 'image/ADD_WATERMARK'
+
 //Action Function
 export const imageDelete = (id) => ({ type: IMAGE_DELETE, id }) // 해당 id값을 가진 사진 전부 삭제
+export const imageUpload = (image) => ({ type: IMAGE_UPLOAD, image })
+
 //Thunk
-export const imageUpload = (image) => async (dispatch, getState) => {
-  var formdata = new FormData()
-  formdata.append('img', image[0].img)
-
-  var requestOptions = {
-    method: 'POST',
-    body: formdata,
-  }
-
-  fetch(BASE_URL + 'ip/add', requestOptions)
-    .then((response) => response.json())
-    .then((result) => console.log(result))
-    .catch((error) => console.log('error', error))
-
-  // fetch(BASE_URL + `file/download/bf69-b96a-822b-f814-33c5`)
-  //   .then((response) => response.blob())
-  //   .then((blob) => {
-  //     console.log(blob)
-  //   })
-
-  dispatch({ type: IMAGE_UPLOAD, image })
+export const addWaterMark = (images) => async (dispatch, getState) => {
+  let new_url = ''
+  images.forEach((image, id) => {
+    var formdata = new FormData()
+    formdata.append('img', image.img)
+    var requestOptions = {
+      method: 'POST',
+      body: formdata,
+    }
+    fetch(BASE_URL + 'ip/add', requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        return result.fileName
+      })
+      .then((result) => {
+        downloadImage(result).then((value) => {
+          new_url = value
+        })
+      })
+      .then(() => {
+        dispatch({ type: ADD_WATERMARK, id, new_url })
+      })
+      .catch((error) => console.log('error', error))
+  })
 }
 
-export const getImage = () => async (dispatch, getState) => {
-  dispatch({ type: GET_IMAGE, image })
+export const downloadImage = async (fileName) => {
+  let new_url = ''
+
+  await fetch(BASE_URL + `file/download/${fileName}`)
+    .then((response) => response)
+    .then((result) => {
+      new_url = result.url
+    })
 }
 
 export const processMosaic = (image) => async (dispatch, getState) => {
@@ -151,9 +163,14 @@ export default function image(state = initialState, action) {
         // imageFile: [...state.imageFile, action.image],
         imageFile: state.imageFile.concat(action.image),
       }
-    case GET_IMAGE:
+    case ADD_WATERMARK:
       return {
         ...state,
+        imageFile: state.imageFile.map((item) =>
+          item.id === action.id + 1
+            ? { ...item, new_url: action.new_url }
+            : item
+        ),
       }
     case IMAGE_DELETE:
       return {

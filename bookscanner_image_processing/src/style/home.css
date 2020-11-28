@@ -16,7 +16,8 @@
   font-size: 6em;
 }
 
-.AddButton {
+.AddButton,
+.DownloadButton {
   justify-content: flex-end;
   width: 10em;
   height: 5em;
