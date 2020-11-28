@@ -28,9 +28,8 @@ function addWaterMark(sourceFile, uuid) {
 }
 
 function imageContrast(sourceFile, uuid) {
-    var saveFile = config.fileList.imageUpload + uuid + '.jpg';
     return new Promise((res, rej) => {
-        runShell('sh imageContrast.sh ' + sourceFile + " " + saveFile).
+        runShell('sh runner/imageContrast.sh ' + sourceFile + " " + uuid).
         then((stdout) => {
             res(stdout);
         }).
@@ -42,9 +41,8 @@ function imageContrast(sourceFile, uuid) {
 
 // 사람이 올린 사진에서 종이부분을 찾는것.
 function paperDetect(sourceFile, uuid) {
-    var saveFile = config.fileList.imageUpload + uuid + '.jpg';
     return new Promise((res, rej) => {
-        runShell('sh paperDetect.sh ' + sourceFile + " " + saveFile).
+        runShell('sh runner/paperDetect.sh ' + sourceFile + " " + uuid).
         then((stdout) => {
             res(stdout);
         }).
@@ -57,7 +55,7 @@ function paperDetect(sourceFile, uuid) {
 // 종이부분에서 사진 List를 찾는것.
 function imageDetect(sourceFile) {
     return new Promise((res, rej) => {
-        runShell('sh imageDetect.sh ' + sourceFile).
+        runShell('sh runner/imageDetect.sh ' + sourceFile).
         then((stdout) => {
             res(stdout);
         }).
@@ -69,7 +67,7 @@ function imageDetect(sourceFile) {
 
 function imageBlur(sourceFile, uuid, startX, startY, endX, endY, backX, backY) {
     return new Promise((res, rej) => {
-        runShell('sh imageBlur.sh ' + sourceFile + " " + String(startX) + " " + String(startY) + " " + String(endX) + " " + String(endY) + " " + String(backX) + " " + String(backY) + " ").
+        runShell('sh runner/imageBlur.sh ' + sourceFile + " " + uuid  + " " + String(startX) + " " + String(startY) + " " + String(endX) + " " + String(endY) + " " + String(backX) + " " + String(backY) + " ").
         then((stdout) => {
             res(stdout);
         }).

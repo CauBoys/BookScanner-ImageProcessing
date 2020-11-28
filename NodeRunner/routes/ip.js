@@ -18,7 +18,7 @@ const upload = multer({
 router.post('/cut', upload.single("img"), (req, res, next) => {
     var uuid = getUUID();
     var outputFileName = config.fileList.imageUpload + uuid + ".jpg";
-    var inputFileName = req.file.fileName;
+    var inputFileName = config.fileList.imageUpload + req.file.filename;
 
     nodeRunner.paperDetect(inputFileName, outputFileName).then((stdout) => {
         res.json({
