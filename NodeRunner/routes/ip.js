@@ -1,89 +1,101 @@
 const express = require('express');
-const fs = require('fs');
+const config = require('../config');
 const router = express.Router();
 const fileIO = require('../utils/fileIO');
+const nodeRunner = require('../nodeRunner');
+const multer = require("multer");
 
-router.post('/cut', (req, res, next) => {
+const storage = multer.diskStorage({
+    destination: config.fileList.imageUpload,
+    filename: function (req, file, next) {
+        next(null, "I_" + getUUID() + ".jpg");
+    },
+});
+
+const upload = multer({
+    storage: storage
+});
+
+router.post('/cut', upload.single("img"), (req, res, next) => {
     var uuid = getUUID();
-    var imageFile = req.body.imageFile; // TODO : Change real image name.
-    fileIO.jobAttacher(imageFile, "cut", uuid)
-    .then(() => {
+    var outputFileName = config.fileList.imageUpload + uuid + ".jpg";
+    var inputFileName = req.file.fileName;
+
+    nodeRunner.paperDetect(inputFileName, outputFileName).then((stdout) => {
         res.json({
             result: true,
-            uuid: uuid
+            fileName: uuid
         });
     })
     .catch((err) => {
         console.log(err);
-        res.json({
-            result: false
-        });
     });
 });
 
-router.post('/find', (req, res, next) => {
+router.post('/find', upload.single("img"), (req, res, next) => {
     var uuid = getUUID();
-    var imageFile = req.body.imageFile; // TODO : Change real image name.
-    // Find Image 는 조금 다른데, 결과로 uuid 를 알려주는게 아니라 결과로 true 만 보내고, 나중에 작업 끝났을때 요청시 알려주는 방식으로 해야할듯.
-
-    fileIO.jobAttacher(imageFile, "find", uuid)
-    .then(() => {
-        res.json({ result: true });
+    var outputFileName = config.fileList.imageUpload + uuid;
+    var inputFileName = req.file.fileName;
+    
+    nodeRunner.imageDetect(inputFileName, outputFileName).then((stdout) => {
+        var files = stdout.split("\n");
+        // files 에 jpg 빼고 보내자.
+        res.json({
+            result: true,
+            fileName: uuid
+        });
     })
     .catch((err) => {
         console.log(err);
-        res.json({ result: false });
     });
 });
 
-router.post('/contrast', (req, res, next) => {
-    var imageFile = req.body.imageFile; // TODO : Change real image name.
-    fileIO.jobAttacher(imageFile, "contrast", uuid)
-    .then(() => {
+router.post('/contrast',  upload.single("img"), (req, res, next) => {
+    var uuid = getUUID();
+    var outputFileName = config.fileList.imageUpload + uuid + ".jpg";
+    var inputFileName = req.file.fileName;
+
+    nodeRunner.imageContrast(inputFileName, outputFileName).then((stdout) => {
         res.json({
             result: true,
-            uuid: uuid
+            fileName: uuid
         });
     })
     .catch((err) => {
         console.log(err);
-        res.json({
-            result: false
-        });
     });
 });
 
-router.post('/blur', (req, res, next) => {
-    var imageFile = req.body.imageFile; // TODO : Change real image name.
-    fileIO.jobAttacher(imageFile, "blur", uuid)
-    .then(() => {
+router.post('/blur',  upload.single("img"), (req, res, next) => {
+    var uuid = getUUID();
+    var outputFileName = config.fileList.imageUpload + uuid + ".jpg";
+    var inputFileName = req.file.fileName;
+    var coord = [req.body.startX, req.body.startY, req.body.endX, req.body.endY, req.body.backX, req.body.backY]
+
+    nodeRunner.imageBlur(inputFileName, outputFileName, coord[0], coord[1], coord[2], coord[3], coord[4], coord[5]).then((stdout) => {
         res.json({
             result: true,
-            uuid: uuid
+            fileName: uuid
         });
     })
     .catch((err) => {
         console.log(err);
-        res.json({
-            result: false
-        });
     });
 });
 
-router.post('/add', (req, res, next) => {
-    var imageFile = req.body.imageFile; // TODO : Change real image name.
-    fileIO.jobAttacher(imageFile, "add", uuid)
-    .then(() => {
+router.post('/add',  upload.single("img"), (req, res, next) => {
+    var uuid = getUUID();
+    var outputFileName = config.fileList.imageUpload + uuid + ".jpg";
+    var inputFileName = req.file.fileName;
+
+    nodeRunner.addWaterMark(inputFileName, outputFileName).then((stdout) => {
         res.json({
             result: true,
-            uuid: uuid
+            fileName: uuid
         });
     })
     .catch((err) => {
         console.log(err);
-        res.json({
-            result: false
-        });
     });
 });
 
