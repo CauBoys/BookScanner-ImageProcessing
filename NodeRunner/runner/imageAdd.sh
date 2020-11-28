@@ -1,1 +1,1 @@
-./imageAdd.exe $1 $2
+./runner/imageAdd.exe $1 $2

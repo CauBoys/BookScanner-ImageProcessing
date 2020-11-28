@@ -1,8 +1,7 @@
 const express = require('express');
 const config = require('../config');
 const router = express.Router();
-const fileIO = require('../utils/fileIO');
-const nodeRunner = require('../nodeRunner');
+const nodeRunner = require('../runner/nodeRunner');
 const multer = require("multer");
 
 const storage = multer.diskStorage({
@@ -35,14 +34,13 @@ router.post('/cut', upload.single("img"), (req, res, next) => {
 router.post('/find', upload.single("img"), (req, res, next) => {
     var uuid = getUUID();
     var outputFileName = config.fileList.imageUpload + uuid;
-    var inputFileName = req.file.fileName;
+    var inputFileName = config.fileList.imageUpload + req.file.filename;
     
     nodeRunner.imageDetect(inputFileName, outputFileName).then((stdout) => {
         var files = stdout.split("\n");
-        // files 에 jpg 빼고 보내자.
         res.json({
             result: true,
-            fileName: uuid
+            fileName: files
         });
     })
     .catch((err) => {
@@ -53,7 +51,7 @@ router.post('/find', upload.single("img"), (req, res, next) => {
 router.post('/contrast',  upload.single("img"), (req, res, next) => {
     var uuid = getUUID();
     var outputFileName = config.fileList.imageUpload + uuid + ".jpg";
-    var inputFileName = req.file.fileName;
+    var inputFileName = config.fileList.imageUpload + req.file.filename;
 
     nodeRunner.imageContrast(inputFileName, outputFileName).then((stdout) => {
         res.json({
@@ -69,7 +67,7 @@ router.post('/contrast',  upload.single("img"), (req, res, next) => {
 router.post('/blur',  upload.single("img"), (req, res, next) => {
     var uuid = getUUID();
     var outputFileName = config.fileList.imageUpload + uuid + ".jpg";
-    var inputFileName = req.file.fileName;
+    var inputFileName = config.fileList.imageUpload + req.file.filename;
     var coord = [req.body.startX, req.body.startY, req.body.endX, req.body.endY, req.body.backX, req.body.backY]
 
     nodeRunner.imageBlur(inputFileName, outputFileName, coord[0], coord[1], coord[2], coord[3], coord[4], coord[5]).then((stdout) => {
@@ -86,7 +84,7 @@ router.post('/blur',  upload.single("img"), (req, res, next) => {
 router.post('/add',  upload.single("img"), (req, res, next) => {
     var uuid = getUUID();
     var outputFileName = config.fileList.imageUpload + uuid + ".jpg";
-    var inputFileName = req.file.fileName;
+    var inputFileName = config.fileList.imageUpload + req.file.filename;
 
     nodeRunner.addWaterMark(inputFileName, outputFileName).then((stdout) => {
         res.json({

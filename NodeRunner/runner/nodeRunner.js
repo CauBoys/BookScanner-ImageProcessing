@@ -1,6 +1,6 @@
 const { exec } = require('child_process');
 const fs = require('fs');
-const config = require('./config');
+const config = require('../config');
 
 function runShell(shellScript) {
 	return new Promise((res, rej) => {
@@ -17,8 +17,7 @@ function runShell(shellScript) {
 
 function addWaterMark(sourceFile, uuid) {
     return new Promise((res, rej) => {
-        var saveFile = config.fileList.imageUpload + uuid + '.jpg';
-        runShell('sh imageAdd.sh ' + sourceFile + " " + saveFile).
+        runShell('sh runner/imageAdd.sh ' + sourceFile + " " + uuid).
         then((stdout) => {
             res(stdout);
         }).
