@@ -1,4 +1,4 @@
-export const BASE_URL = 'http://192.168.35.163:46000/'
+export const BASE_URL = 'http://code-giraffe.iptime.org:35050/'
 
 export const DEEP_CLONE = (obj) => {
   if (obj === null || typeof obj !== 'object') {
@@ -12,4 +12,20 @@ export const DEEP_CLONE = (obj) => {
   }
 
   return result
+}
+
+export const encodeBase64ImageTagviaFileReader = (url) => {
+  return new Promise((resolve, reject) => {
+    let xhr = new XMLHttpRequest()
+    xhr.onload = () => {
+      let reader = new FileReader()
+      reader.onloadend = function () {
+        resolve(reader.result)
+      }
+      reader.readAsDataURL(xhr.response)
+    }
+    xhr.open('GET', url)
+    xhr.responseType = 'blob'
+    xhr.send()
+  })
 }
