@@ -5,6 +5,7 @@
 
 #define DIV_NUM 4.5
 #define MAX_GRAYSCALE_VALUE 256
+#define MULTI_VALUE 0.003
 
 using namespace cv;
 using namespace std;
@@ -17,13 +18,14 @@ int imgAt(Mat img, int x, int y, int c);
 void setAt(Mat img, int x, int y, int c, int value);
 
 int main(int argc, char* argv[]) {
-	if (argc != 3) {
+	if (argc != 4) {
 		printf("args not profit.\n");
 		return 0;
 	}
 
 	char* inputFile = argv[1];
 	char* saveFile = argv[2];
+	int value = atoi(argv[3]);
 
 	Mat img = imread(inputFile, IMREAD_COLOR);
 	
@@ -32,7 +34,7 @@ int main(int argc, char* argv[]) {
 
 	Mat img_higher_contrast = Mat::zeros(height, width, CV_8UC3);
 	// We can get contrasted image with adjusting alpha value ( which need to be over 1 ).
-	contrast(img, img_higher_contrast, 1.15);
+	contrast(img, img_higher_contrast, 1 + MULTI_VALUE * value);
 
 	imwrite(saveFile, img_higher_contrast);
 	return 0;

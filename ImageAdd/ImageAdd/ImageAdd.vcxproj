@@ -148,6 +148,7 @@
     <ClCompile Include="imageAdd.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="cowboys.png" />
     <Image Include="imgex.jpg" />
   </ItemGroup>
   <ItemGroup>
