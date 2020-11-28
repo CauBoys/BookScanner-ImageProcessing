@@ -1,6 +1,6 @@
 var express = require('express');
 var app = express();
-var port = 46000;
+var port = 35050;
 
 var cors = require('cors');
 
