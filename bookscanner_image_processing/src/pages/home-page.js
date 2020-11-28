@@ -1,13 +1,17 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react'
 import { NextButtons } from '../components/nextButton'
 import { Button, Card, ProgressBar } from 'react-bootstrap'
-import { FaPlusCircle } from 'react-icons/fa'
+import { FaDownload, FaPlusCircle } from 'react-icons/fa'
 import 'react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css'
 import RangeSlider from 'react-bootstrap-range-slider'
 import testImg from '../assets/logo.png'
 import { useSelector, useDispatch, shallowEqual } from 'react-redux'
-import { imageUpload, imageDelete } from '../modules/image'
-import { BASE_URL, DEEP_CLONE } from '../common/common'
+import { imageUpload, imageDelete, addWaterMark } from '../modules/image'
+import {
+  BASE_URL,
+  DEEP_CLONE,
+  encodeBase64ImageTagviaFileReader,
+} from '../common/common'
 import '../style/home.css'
 
 export default function Home() {
@@ -43,13 +47,31 @@ export default function Home() {
     dispatch,
   ])
   const imgDelete = useCallback(() => dispatch(imageDelete()), [dispatch])
-
+  const imgWaterMark = useCallback((images) => dispatch(addWaterMark(images)), [
+    dispatch,
+  ])
   useEffect(() => {
     if (nextId.current >= 1) {
       imgUpload(image)
     }
+
     nextId.current += 1
   }, [image])
+
+  const handleSaveClick = () => {
+    for (var i = 0; i < nextId.current - 1; i++) {
+      const link = document.createElement('a')
+      // encodeBase64ImageTagviaFileReader(imageStore[i].new_url).then(
+      //   (response) => {
+      //     console.log(response)
+      //   }
+      // )
+      link.href = imageStore[i].url
+
+      link.download = `${imageStore[i].img.name}`
+      link.click()
+    }
+  }
 
   const handleClick = (event) => {
     hiddenFileInput.current.click()
@@ -80,27 +102,8 @@ export default function Home() {
         <Card className="Card" id={id}>
           <Card.Img className="Card-Image" variant="top" src={item.url} />
           <Card.Body className="Card-Body">
-            <div className="Slider-Container">
-              <div className="Slider-Title">contrast</div>
-              <div className="Slider">
-                <RangeSlider
-                  value={contrastValue[nextId.current]}
-                  onChange={(changeEvent) => {
-                    setContrastValue(
-                      contrastValue.map((item) =>
-                        item.id === id + 1
-                          ? { ...item, value: changeEvent.target.value }
-                          : item
-                      )
-                    )
-
-                    console.log(contrastValue)
-                  }}
-                />
-              </div>
-            </div>
             <div className="Next-Button">
-              <NextButtons path="/detail" name="Adjust Image" />
+              <NextButtons path="/detail" name="Adjust Image" id={id} />
             </div>
           </Card.Body>
         </Card>
@@ -112,9 +115,24 @@ export default function Home() {
     <div className="Container">
       <div className="Header">
         <h1 className="Title">Image List</h1>
-        {/* <Button variant="primary" className="AddButton">
-          <FaPlusCircle size={20} />
-        </Button> */}
+        <Button
+          variant="primary"
+          className="DownloadButton"
+          onClick={() => {
+            if (
+              window.confirm(
+                `${nextId.current - 1}개의 사진을 다운로드 받으시겠습니까?`
+              ) == true
+            ) {
+              imgWaterMark(imageStore)
+              handleSaveClick()
+            } else {
+              return false
+            }
+          }}
+        >
+          <FaDownload size={20} />
+        </Button>
       </div>
       <div className="Body-Container">
         {cardList(imageStore)}
