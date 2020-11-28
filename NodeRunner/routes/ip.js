@@ -65,11 +65,30 @@ router.post('/contrast',  upload.single("img"), (req, res, next) => {
 
 router.post('/blur',  upload.single("img"), (req, res, next) => {
     var uuid = getUUID();
+    var value = req.body.value;
     var outputFileName = config.fileList.imageUpload + uuid + ".jpg";
     var inputFileName = config.fileList.imageUpload + req.file.filename;
-    var coord = [req.body.startX, req.body.startY, req.body.endX, req.body.endY]
+    var coord = [req.body.startX, req.body.startY, req.body.endX, req.body.endY];
 
-    nodeRunner.imageBlur(inputFileName, outputFileName, coord[0], coord[1], coord[2], coord[3]).then((stdout) => {
+    nodeRunner.imageBlur(inputFileName, outputFileName, coord[0], coord[1], coord[2], coord[3], value).then((stdout) => {
+        res.json({
+            result: true,
+            fileName: uuid
+        });
+    })
+    .catch((err) => {
+        console.log(err);
+    });
+});
+
+router.post('/mosiac',  upload.single("img"), (req, res, next) => {
+    var uuid = getUUID();
+    var value = req.body.value;
+    var outputFileName = config.fileList.imageUpload + uuid + ".jpg";
+    var inputFileName = config.fileList.imageUpload + req.file.filename;
+    var coord = [req.body.startX, req.body.startY, req.body.endX, req.body.endY];
+
+    nodeRunner.imageMosiac(inputFileName, outputFileName, coord[0], coord[1], coord[2], coord[3], value).then((stdout) => {
         res.json({
             result: true,
             fileName: uuid
@@ -86,7 +105,7 @@ router.post('/deletion',  upload.single("img"), (req, res, next) => {
     var inputFileName = config.fileList.imageUpload + req.file.filename;
     var coord = [req.body.startX, req.body.startY, req.body.endX, req.body.endY, req.body.backX, req.body.backY]
 
-    nodeRunner.imageBlur(inputFileName, outputFileName, coord[0], coord[1], coord[2], coord[3], coord[4], coord[5]).then((stdout) => {
+    nodeRunner.imageDeletion(inputFileName, outputFileName, coord[0], coord[1], coord[2], coord[3], coord[4], coord[5]).then((stdout) => {
         res.json({
             result: true,
             fileName: uuid

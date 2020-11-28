@@ -89,7 +89,7 @@ function imageBlur(sourceFile, uuid, startX, startY, endX, endY, value) {
     });
 }
 
-function imageMosiac(sourceFile, uuid, startX, startY, endX, endY) {
+function imageMosiac(sourceFile, uuid, startX, startY, endX, endY, value) {
     return new Promise((res, rej) => {
         runShell('sh runner/imageMosiac.sh ' + sourceFile + " " + uuid  + " " + String(startX) + " " + String(startY) + " " + String(endX) + " " + String(endY) + " " + String(value)).
         then((stdout) => {
