@@ -23,7 +23,6 @@
 const int max_lowThreshold = 100;
 const int ratio = 3;
 const int kernel_size = 3;
-const char* window_name = "Edge Map";
 
 using namespace cv;
 using namespace std;
