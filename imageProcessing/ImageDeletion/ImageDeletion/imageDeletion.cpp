@@ -77,7 +77,6 @@ void image_deleteion(Mat img, Mat dst, int startX, int startY, int endX, int end
 			}
 		}
 	}
-
 }
 
 int imgAt(Mat img, int x, int y, int c) {

@@ -10,6 +10,7 @@ using namespace std;
 
 int check_coord_available(int width, int height, int x, int y);
 Vec3b average(Mat img, int x, int y, int windowX, int windowY);
+void add_up_image(Mat src, Mat dst, int startX, int startY, int endX, int endY);
 void image_blur(Mat img, Mat dst, int startX, int startY, int endX, int endY, int windowX, int windowY);
 void setAt(Mat img, int x, int y, int c, int value);
 int imgAt(Mat img, int x, int y, int c);
@@ -45,17 +46,29 @@ int main(int argc, char* argv[]) {
 		return 0;
 	}
 
-	Mat dst = Mat::zeros(height, width, CV_8UC3);
+	Mat blurImage;
 
-	image_blur(img, dst, startX, startY, endX, endY, windowX, windowY);
+	blur(img, blurImage, Size(windowX, windowY), Point(-1, -1));
+	add_up_image(img, blurImage, startX, startY, endX, endY);
 
-	imwrite(saveFile, dst);
+	imwrite(saveFile, img);
 
 	return 0;
 }
 
 int check_coord_available(int width, int height, int x, int y) {
 	return x >= 0 && x < width&& y >= 0 && y < height;
+}
+
+void add_up_image(Mat src, Mat dst, int startX, int startY, int endX, int endY) {
+	// Add Up dst image`s start ~ end part into src.
+	for (int x = startX; x < endX; x++) {
+		for (int y = startY; y < endY; y++) {
+			for (int c = 0; c < 3; c++) {
+				setAt(src, x, y, c, imgAt(dst, x, y, c));
+			}
+		}
+	}
 }
 
 void image_blur(Mat img, Mat dst, int startX, int startY, int endX, int endY, int windowX, int windowY) {

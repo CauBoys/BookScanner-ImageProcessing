@@ -6,12 +6,16 @@
 
 using namespace std;
 using namespace cv;
+
 Mat src, src_gray;
 Mat dst, detected_edges;
 int lowThreshold = 0;
 const int max_lowThreshold = 100;
 const int ratio = 3;
 const int kernel_size = 3;
+
+double angle(cv::Point pt1, cv::Point pt2, cv::Point pt0);
+void showPictures(Mat img, char* saveFile);
 
 double angle(cv::Point pt1, cv::Point pt2, cv::Point pt0) {
     double dx1 = pt1.x - pt0.x;
