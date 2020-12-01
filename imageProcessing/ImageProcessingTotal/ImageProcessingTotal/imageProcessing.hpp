@@ -35,7 +35,7 @@ int findMiddleValue(int* histogram, int maxPixel);
 void makeGrayHistogram(Mat grayImg, int* histogram, int width, int height);
 
 // Picture Extraction
-void showPictures(Mat img, char* saveFile);
+void showPictures(Mat img, string saveFile);
 
 // Paper Scaling
 Mat arrange_image(Mat image);
@@ -66,8 +66,7 @@ int imgAtAlpha(Mat img, int x, int y, int c);
 void setAt(Mat img, int x, int y, int c, int value);
 void printHelp();
 
-int isFileName(char* argv);
-void makeOutputFileName(char* inputFile, char* outFile);
+string makeOutputFileName(string image);
 int checkContrastOption(int argc, char* argv[]);
 int checkBlurOption(int argc, char* argv[]);
 int checkMosiacOption(int argc, char* argv[]);

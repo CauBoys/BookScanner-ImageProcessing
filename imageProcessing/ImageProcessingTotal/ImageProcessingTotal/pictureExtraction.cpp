@@ -8,7 +8,7 @@ double angle(cv::Point pt1, cv::Point pt2, cv::Point pt0) {
     return (dx1 * dx2 + dy1 * dy2) / sqrt((dx1 * dx1 + dy1 * dy1) * (dx2 * dx2 + dy2 * dy2) + 1e-10);
 }
 
-void showPictures(Mat img, char* saveFile) {
+void showPictures(Mat img, string saveFile) {
     Mat src_gray, canny_output;
     RNG rng(12345);
     vector<Vec4i> hierarchy;
@@ -36,10 +36,10 @@ void showPictures(Mat img, char* saveFile) {
 
     /// Draw contours
     Mat drawing = Mat::zeros(img.size(), CV_8UC3);
-    string sfile(saveFile);
+    namedWindow("test", WINDOW_NORMAL);
     for (int i = 0; i < contours.size(); i++)
     {
-        string loc = sfile + "_" + to_string(i) + ".jpg";
+        string loc = saveFile + "_" + to_string(i) + ".jpg";
         Mat crop = img(boundingRect(cv::Mat(contours[i])));
         imwrite(loc, crop);
         std::cout << loc << std::endl;

@@ -4,39 +4,39 @@
 Mat src, src_gray;
 Mat dst, detected_edges;
 int lowThreshold = 0;
-string file_name = "good_1";
 
 
 int main(int argc, char* argv[]) {
-	if (strcmp(argv[0], "-h")) {
+	if (strcmp(argv[1], "-h") == 0) {
 		printHelp();
 		return 0;
 	}
-	else if (strcmp(argv[0], "-e") == 0) {
-		// example
-		return 0;
+
+	string image(argv[1]);//image.jpg
+	string inputFile = "input/" + image;
+	string saveFile = makeOutputFileName(image);
+	if (strcmp(argv[1], "-e") == 0) {
+		inputFile = "input/sample(1).jpg";
+		saveFile = "input/output/sample(1)";
 	}
 
-	char* inputFile = argv[1];
 	src = imread(inputFile, IMREAD_COLOR); // Load an image
+
 	if (src.empty()) {
 		printf("Could not open or find the image!\n");
 		return -1;
 	}
 
-	char* saveFile;
-	if (isFileName(argv[2]))  saveFile = argv[2];
-	else makeOutputFileName(argv[1], saveFile);
-
 	Mat scalingImage = arrange_image(src);	// Scaling Image
 	showPictures(scalingImage, saveFile); // Picture Extraction Part.
+	return 0;
 
 	int height = scalingImage.rows;
 	int width = scalingImage.cols;
 	Mat dst;	// dst will be final saved file.
 
 	// Image Add Part
-	Mat addImg = imread("./runner/cowboys.png", IMREAD_UNCHANGED);	// Alpha Value Image need to read with IMREAD_UNCHANGED.
+	Mat addImg = imread("sampleImages/logo", IMREAD_UNCHANGED);	// Alpha Value Image need to read with IMREAD_UNCHANGED.
 	dst = Mat::zeros(height, width, CV_8UC3);
 	imageAddTo(scalingImage, addImg, dst, width - addImg.cols - 40, height - addImg.rows - 40);
 	

@@ -24,16 +24,8 @@ int imgAtAlpha(Mat img, int x, int y, int c) {
 	return img.at<Vec4b>(y, x)[c];
 }
 
-
-int isFileName(char* argv) {
-
-	// file 이름이면 1, 거짓이면 0
-	return 1;
-}
-
-void makeOutputFileName(char* inputFile, char* outFile) {
-	outFile = (char*)malloc(sizeof(char) * FILE_NAME_MAX);
-	// make file name..
+string makeOutputFileName(string image) {
+	return "input/output/" + image.substr(0, image.find("."));
 }
 
 int checkContrastOption(int argc, char* argv[]) {
