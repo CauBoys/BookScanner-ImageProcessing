@@ -9,6 +9,7 @@ void contrast(Mat src, Mat dst, float alpha) {
 	int height = gray.rows;
 	int width = gray.cols;
 	int histogram[MAX_GRAYSCALE_VALUE];
+	int threashold = 20;
 
 	// Init for histogram.
 	for (int i = 0; i < MAX_GRAYSCALE_VALUE; i++) {
@@ -23,10 +24,12 @@ void contrast(Mat src, Mat dst, float alpha) {
 		for (int y = 0; y < height; y++) {
 			for (int c = 0; c < 3; c++) {
 				// ¸¸¾à °¡¿îµ¥ °ªº¸´Ù ÀÛ´Ù¸é ´õ ¾îµÓ°Ô ¸¸µë. ¾Æ´Ï¶ó¸é ´õ ¹à°Ô ¸¸µë.
-				if (grayAt(gray, x, y) < midIndex)
+				if (grayAt(gray, x, y) < midIndex - threashold)
 					setAt(dst, x, y, c, int(imgAt(src, x, y, c) * (1 / alpha)));
-				else
+				else if (grayAt(gray, x, y) > midIndex + threashold)
 					setAt(dst, x, y, c, int(imgAt(src, x, y, c) * alpha));
+				else
+					setAt(dst, x, y, c, int(imgAt(src, x, y, c)));
 			}
 		}
 	}
