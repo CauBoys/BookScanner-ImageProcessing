@@ -29,14 +29,14 @@ int main(int argc, char* argv[]) {
 
 	Mat scalingImage = arrange_image(src);	// Scaling Image
 	showPictures(scalingImage, saveFile); // Picture Extraction Part.
-	return 0;
+	saveFile += "_output.jpg";
 
 	int height = scalingImage.rows;
 	int width = scalingImage.cols;
 	Mat dst;	// dst will be final saved file.
 
 	// Image Add Part
-	Mat addImg = imread("sampleImages/logo", IMREAD_UNCHANGED);	// Alpha Value Image need to read with IMREAD_UNCHANGED.
+	Mat addImg = imread("input/logo", IMREAD_UNCHANGED);	// Alpha Value Image need to read with IMREAD_UNCHANGED.
 	dst = Mat::zeros(height, width, CV_8UC3);
 	imageAddTo(scalingImage, addImg, dst, width - addImg.cols - 40, height - addImg.rows - 40);
 	
