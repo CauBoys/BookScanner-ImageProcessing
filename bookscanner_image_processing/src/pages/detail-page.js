@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
+import { Button } from 'react-bootstrap'
 import '../style/detail.css'
 import {
   drawEraseSection,
@@ -28,15 +29,19 @@ export default function Detail() {
         <img src="../Polygon.png" className="btn_back" />
         <p className="go_back">Go Back</p>
       </div>
-      <div className="title">Adjust Image</div>
+      <div className="title">
+        <p>Adjust Image</p>
+        <Button variant="primary" className="DownloadButton">
+          Save
+        </Button>
+      </div>
       <div className="content">
         {/* <div className="showImg"></div> */}
         <canvas
           id="jsCanvas"
           className="canvas"
           style={{
-            backgroundImage:
-              'url(https://s7d2.scene7.com/is/image/TWCNews/snowflake-formatted-snow-03222020jpg?wid=1250&hei=703&$wide-bg$)',
+            backgroundImage: `url(${imageDate[0].url})`,
           }}
         ></canvas>
         <div className="adjustImg">
@@ -45,11 +50,14 @@ export default function Detail() {
             <div className="adjust_content">
               <input
                 type="range"
-                id="jsRange"
-                min="0.1"
-                max="5"
-                value="2.5"
-                step="0.1"
+                id="constrastRange"
+                min="0"
+                max="100"
+                value={constrast}
+                step="1"
+                onChange={() =>
+                  setConstrast(document.querySelector('#constrastRange').value)
+                }
               />
               {/* <RangeSlider value="0" onChange={(changeEvent) => {}} /> */}
             </div>
@@ -68,23 +76,28 @@ export default function Detail() {
                 <div className="adjust_content">
                   <input
                     type="range"
-                    id="jsRange"
-                    min="0.1"
-                    max="5"
-                    value="2.5"
-                    step="0.1"
+                    id="mosaicRange"
+                    min="0"
+                    max="100"
+                    value={mosaic}
+                    step="1"
+                    onChange={() =>
+                      setMosaic(document.querySelector('#mosaicRange').value)
+                    }
                   />
-                  {/* <RangeSlider value="0" onChange={(changeEvent) => {}} /> */}
                 </div>
                 <p className="adjust_title">blur</p>
                 <div className="adjust_content">
                   <input
                     type="range"
-                    id="jsRange"
-                    min="0.1"
-                    max="5"
-                    value="2.5"
-                    step="0.1"
+                    id="blurRange"
+                    min="0"
+                    max="100"
+                    value={blur}
+                    step="1"
+                    onChange={() =>
+                      setBlur(document.querySelector('#blurRange').value)
+                    }
                   />
                   {/* <RangeSlider value="0" onChange={(changeEvent) => {}} /> */}
                 </div>
