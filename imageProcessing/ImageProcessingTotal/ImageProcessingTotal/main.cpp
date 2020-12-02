@@ -13,12 +13,12 @@ int main(int argc, char* argv[]) {
 	}
 
 	string image(argv[1]);//image.jpg
-	string inputFile = "input/" + image;
-	string saveFile = makeOutputFileName(image);
 	if (strcmp(argv[1], "-e") == 0) {
-		inputFile = "input/sample(1).jpg";
-		saveFile = "input/output/sample(1)";
+		image = "sample(1).jpg";
 	}
+	string inputFile = "input/" + image;
+	string saveFile1 = makeOutputFileName(image);
+	string saveFile2 = saveFile1 + "_output.jpg";
 
 	src = imread(inputFile, IMREAD_COLOR); // Load an image
 
@@ -27,19 +27,11 @@ int main(int argc, char* argv[]) {
 		return -1;
 	}
 
-	Mat scalingImage = arrange_image(src);	// Scaling Image
-	showPictures(scalingImage, saveFile); // Picture Extraction Part.
-	saveFile += "_output.jpg";
-
-	int height = scalingImage.rows;
-	int width = scalingImage.cols;
+	int height = src.rows;
+	int width = src.cols;
+	Mat input = src.clone();
 	Mat dst;	// dst will be final saved file.
 
-	// Image Add Part
-	Mat addImg = imread("input/logo", IMREAD_UNCHANGED);	// Alpha Value Image need to read with IMREAD_UNCHANGED.
-	dst = Mat::zeros(height, width, CV_8UC3);
-	imageAddTo(scalingImage, addImg, dst, width - addImg.cols - 40, height - addImg.rows - 40);
-	
 	// Image Contrast Part
 	int contrastLoc = checkContrastOption(argc, argv);
 	int value;
@@ -55,10 +47,13 @@ int main(int argc, char* argv[]) {
 			return -1;
 		}
 		dst = Mat::zeros(height, width, CV_8UC3);
-		contrast(scalingImage, dst, 1 + MULTI_VALUE * value);
-		scalingImage = dst.clone();	// Save at scaling Image with contrast changed version.
+		contrast(input, dst, 1 + MULTI_VALUE * value);
+		input = dst.clone();	// Save at scaling Image with contrast changed version.
 	}
-	
+	dst = arrange_image(input);	// Scaling Image
+	input = dst.clone();
+	showPictures(input, saveFile1); // Picture Extraction Part.
+
 	// Image Deletion Part
 	int deletionLoc = checkDeletionOption(argc, argv); 
 	int startX, startY, endX, endY;
@@ -89,8 +84,8 @@ int main(int argc, char* argv[]) {
 			return -1;
 		}
 		dst = Mat::zeros(height, width, CV_8UC3);
-		image_deleteion(scalingImage, dst, startX, startY, endX, endY, backX, backY);
-		scalingImage = dst.clone();	// Save at scaling Image with deleted version.
+		image_deleteion(input, dst, startX, startY, endX, endY, backX, backY);
+		input = dst.clone();	// Save at scaling Image with deleted version.
 	}
 
 	// Image mosiac
@@ -115,13 +110,13 @@ int main(int argc, char* argv[]) {
 		windowY = WINDOW_SIZE * value;
 		dst = Mat::zeros(height, width, CV_8UC3);
 
-		image_mosiac(scalingImage, dst, startX, startY, endX, endY, windowX, windowY);
-		scalingImage = dst.clone();	// Save at scaling Image with deleted version.
+		image_mosiac(input, dst, startX, startY, endX, endY, windowX, windowY);
+		input = dst.clone();	// Save at scaling Image with deleted version.
 	}
 
 	// Image Blur
 	int blurLoc = checkBlurOption(argc, argv);
-	if (mosiacLoc > 0) {
+	if (blurLoc > 0) {
 		startX = atoi(argv[blurLoc + 1]);
 		startY = atoi(argv[blurLoc + 2]);
 		endX = atoi(argv[blurLoc + 3]);
@@ -138,13 +133,21 @@ int main(int argc, char* argv[]) {
 		}
 		windowX = WINDOW_SIZE * value;
 		windowY = WINDOW_SIZE * value;
-		Mat blurImage;
+		blur(input, dst, Size(windowX, windowY), Point(-1, -1));
+		input = dst.clone();
+		add_up_image(input, dst, startX, startY, endX, endY);	// Add up blurring part at original pictures.
+		input = dst.clone();
+	}	
 
-		blur(scalingImage, blurImage, Size(windowX, windowY), Point(-1, -1));
-		add_up_image(scalingImage, blurImage, startX, startY, endX, endY);	// Add up blurring part at original pictures.
+	// Image Add Part
+	Mat addImg = imread("input/logo.png", IMREAD_UNCHANGED);	// Alpha Value Image need to read with IMREAD_UNCHANGED.
+	if (addImg.empty()) {
+		printf("Could not open or find the logo!\n");
+	} else {
+		dst = Mat::zeros(height, width, CV_8UC3);
+		imageAddTo(input, addImg, dst, width - addImg.cols - 40, height - addImg.rows - 40);
 	}
-
-	imwrite(saveFile, scalingImage);
+	imwrite(saveFile2, dst);
 	return 0;
 }
 
