@@ -22,31 +22,40 @@ export const addWaterMark = (images) => async (dispatch, getState) => {
       method: 'POST',
       body: formdata,
     }
-    fetch(BASE_URL + 'ip/add', requestOptions)
-      .then((response) => response.json())
-      .then((result) => {
-        return result.fileName
+
+    const requestImage = () => {
+      return new Promise((res, rej) => {
+        fetch(BASE_URL + 'ip/add', requestOptions)
+          .then((response) => response.json())
+          .then((result) => {
+            return result
+          })
+          .then((result) => {
+            downloadImage(result.fileName)
+              .then((req) => {
+                res(req)
+              })
+              .catch((err) => {
+                rej(err)
+              })
+          })
+          .catch((err) => {
+            rej(err)
+          })
       })
-      .then((result) => {
-        downloadImage(result).then((value) => {
-          new_url = value
-        })
-      })
-      .then(() => {
-        dispatch({ type: ADD_WATERMARK, id, new_url })
-      })
-      .catch((error) => console.log('error', error))
+    }
+    requestImage().then((req) => {
+      dispatch({ type: ADD_WATERMARK, id, new_url: req })
+    })
   })
 }
 
-export const downloadImage = async (fileName) => {
-  let new_url = ''
-
-  await fetch(BASE_URL + `file/download/${fileName}`)
-    .then((response) => response)
-    .then((result) => {
-      new_url = result.url
+export const downloadImage = (fileName) => {
+  return new Promise((res, rej) => {
+    fetch(BASE_URL + `file/download/${fileName}`).then((result) => {
+      res(result.url)
     })
+  })
 }
 
 export const processMosaic = (image) => async (dispatch, getState) => {

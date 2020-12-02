@@ -1,9 +1,16 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react'
 import { NextButtons } from '../components/nextButton'
-import { Button, Card, ProgressBar } from 'react-bootstrap'
+import {
+  Button,
+  Card,
+  ProgressBar,
+  Image,
+  Col,
+  Container,
+  Row,
+} from 'react-bootstrap'
 import { FaDownload, FaPlusCircle } from 'react-icons/fa'
 import 'react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css'
-import RangeSlider from 'react-bootstrap-range-slider'
 import testImg from '../assets/logo.png'
 import { useSelector, useDispatch, shallowEqual } from 'react-redux'
 import { imageUpload, imageDelete, addWaterMark } from '../modules/image'
@@ -100,11 +107,16 @@ export default function Home() {
     return imageStore.map((item, id) => {
       return (
         <Card className="Card" id={id}>
+          <Card.Header>HELLO</Card.Header>
           <Card.Img className="Card-Image" variant="top" src={item.url} />
+
           <Card.Body className="Card-Body">
-            <div className="Next-Button">
-              <NextButtons path="/detail" name="Adjust Image" id={id} />
-            </div>
+            <NextButtons
+              className="Next-Button"
+              path="/detail"
+              name="Adjust Image"
+              id={id}
+            />
           </Card.Body>
         </Card>
       )
@@ -158,6 +170,15 @@ export default function Home() {
       <div className="Header-Second">
         <h1 className="Title">Auto Cropped Image</h1>
         <h2 className="SubTitle">Click Image to link page</h2>
+        <div>
+          <Container>
+            <Row>
+              <Col xs={6} md={4}>
+                <Image src={imageStore[0].new_url} rounded />
+              </Col>
+            </Row>
+          </Container>
+        </div>
       </div>
     </div>
   )
