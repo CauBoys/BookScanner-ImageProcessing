@@ -1,6 +1,36 @@
 #include "imageProcessing.hpp"
 
 Mat rotate(Mat src, vector<Point> not_a_rect_shape) {
+    double distance = 0;
+    double min = LONG_MAX, max = 0, yMax = 0;
+    int min_i, max_i, up, down, t1 = -1, t2 = -1;
+    for (int i = 0; i < 4; i++) {
+        distance = sqrt(pow(0 - not_a_rect_shape[i].x, 2) + pow(0 - not_a_rect_shape[i].y, 2));
+        if (min > distance) {
+            min_i = i;
+            min = distance;
+        }
+        if (max < distance) {
+            max_i = i;
+            max = distance;
+        }
+    }
+
+    for (int i = 0; i < 4; i++) {
+        if (i != min_i && i != max_i) {
+            if (t1 == -1) t1 = i;
+            else t2 = i;
+        }
+    }
+
+    if (not_a_rect_shape[t1].y < not_a_rect_shape[t2].y) {
+        up = t1;
+        down = t2;
+    }
+    else {
+        up = t2;
+        down = t1;
+    }
 
     // Assemble a rotated rectangle out of that info
     RotatedRect box = minAreaRect(cv::Mat(not_a_rect_shape));
@@ -9,10 +39,10 @@ Mat rotate(Mat src, vector<Point> not_a_rect_shape) {
     box.points(pts);
 
     cv::Point2f src_vertices[4];
-    src_vertices[0] = not_a_rect_shape[3];
-    src_vertices[1] = not_a_rect_shape[0];
-    src_vertices[2] = not_a_rect_shape[2];
-    src_vertices[3] = not_a_rect_shape[1];
+    src_vertices[0] = not_a_rect_shape[min_i];
+    src_vertices[1] = not_a_rect_shape[up];
+    src_vertices[2] = not_a_rect_shape[down];
+    src_vertices[3] = not_a_rect_shape[max_i];
 
     Point2f dst_vertices[4];
     dst_vertices[0] = Point(0, 0);
