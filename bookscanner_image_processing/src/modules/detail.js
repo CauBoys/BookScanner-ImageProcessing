@@ -68,11 +68,6 @@ export const handleSaveClick = () => {
   const canvas = document.getElementById('jsCanvas')
   const image = canvas.toDataURL()
   const link = document.createElement('a')
-  console.log(image)
-  //   console.log(link)
-  //   link.href = image
-  //   link.download = 'PaintJS[🎨]'
-  //   link.click()
 }
 
 export const endPainting = (event) => {
