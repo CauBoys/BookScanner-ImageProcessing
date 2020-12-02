@@ -7,14 +7,51 @@ const IMAGE_PROCESSING_BLUR = 'image/IMAGE_PROCESSING_BLUR'
 const IMAGE_PROCESSING_DELETEION = 'image/IMAGE_PROCESSING_DELETION'
 const IMAGE_PROCESSING_RESTORE = 'image/IMAGE_PROCESSING_RESTORE'
 const ADD_WATERMARK = 'image/ADD_WATERMARK'
+const FIND_IMAGE = 'image/FIND_IMAGE'
 
 //Action Function
 export const imageDelete = (id) => ({ type: IMAGE_DELETE, id }) // 해당 id값을 가진 사진 전부 삭제
 export const imageUpload = (image) => ({ type: IMAGE_UPLOAD, image })
 
 //Thunk
+export const findImage = (images) => async (dispatch, getState) => {
+  images.forEach((image, id) => {
+    var formdata = new FormData()
+    formdata.append('img', image.img)
+    var requestOptions = {
+      method: 'POST',
+      body: formdata,
+    }
+
+    const requestImage = () => {
+      return new Promise((res, rej) => {
+        fetch(BASE_URL + 'ip/find', requestOptions)
+          .then((response) => response.json())
+          .then((result) => {
+            return result
+          })
+          .then((result) => {
+            downloadImage(result.fileName)
+              .then((req) => {
+                res(req)
+              })
+              .catch((err) => {
+                rej(err)
+              })
+          })
+          .catch((err) => {
+            rej(err)
+          })
+      })
+    }
+    requestImage().then((req) => {
+      console.log(req)
+      dispatch({ type: FIND_IMAGE, id, imgPart: req })
+    })
+  })
+}
+
 export const addWaterMark = (images) => async (dispatch, getState) => {
-  let new_url = ''
   images.forEach((image, id) => {
     var formdata = new FormData()
     formdata.append('img', image.img)
@@ -181,11 +218,20 @@ export default function image(state = initialState, action) {
             : item
         ),
       }
+    case FIND_IMAGE:
+      return {
+        ...state,
+        imageFile: state.imageFile.map((item) =>
+          item.id === action.id + 1
+            ? { ...item, imgPart: action.imgPart }
+            : item
+        ),
+      }
     case IMAGE_DELETE:
       return {
         ...state,
         imageFile: state.imageFile.filter((v) => v.id !== action.id),
-        bufferImage: state.bufferImage.filter((v) => v.id !== action.id),
+        // bufferImage: state.bufferImage.filter((v) => v.id !== action.id),
       }
     case IMAGE_PROCESSING_MOSAIC:
       return {

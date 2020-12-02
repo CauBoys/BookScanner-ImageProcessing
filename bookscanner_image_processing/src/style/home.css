@@ -93,3 +93,11 @@
   flex: 1;
   flex-direction: column;
 }
+
+.Button-Remove {
+  background-color: #1e1e1e;
+  align-self: flex-end;
+  border-radius: 8px;
+  border-color: #ffffff;
+  margin: 10px;
+}
