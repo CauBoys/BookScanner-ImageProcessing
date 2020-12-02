@@ -1,6 +1,6 @@
 #include "imageProcessing.hpp"
 
-Mat rotate(vector<Point> not_a_rect_shape) {
+Mat rotate(Mat src, vector<Point> not_a_rect_shape) {
 
     // Assemble a rotated rectangle out of that info
     RotatedRect box = minAreaRect(cv::Mat(not_a_rect_shape));
@@ -20,22 +20,20 @@ Mat rotate(vector<Point> not_a_rect_shape) {
     dst_vertices[2] = Point(0, box.boundingRect().height - 1);
     dst_vertices[3] = Point(box.boundingRect().width - 1, box.boundingRect().height - 1);
 
-    Mat warpAffineMatrix = getAffineTransform(src_vertices, dst_vertices);
-
     cv::Mat rotated;
     cv::Size size(box.boundingRect().width, box.boundingRect().height);
-    warpAffine(src, rotated, warpAffineMatrix, size, INTER_LINEAR, BORDER_CONSTANT);
-
+    Mat pt = getPerspectiveTransform(src_vertices, dst_vertices);
+    warpPerspective(src, rotated, pt, size);
     return rotated;
 }
 
-Mat arrange_image(Mat image)
+Mat arrange_image(Mat origin)
 {
     vector<vector<Point> > squares;
 
     // blur will enhance edge detection
-
-    Mat dst = image.clone();
+    Mat dst = origin.clone();
+    Mat image = origin.clone();
     Mat blurred(dst);
     medianBlur(dst, blurred, 9);
 
@@ -113,7 +111,7 @@ Mat arrange_image(Mat image)
         for (int j = 0; j < 4; j++) {
             cv::line(image, rect_points[j], rect_points[(j + 1) % 4], cv::Scalar(0, 0, 255), 1, 8); // red
         }
-        return rotate(squares[i]);
+        return rotate(origin, squares[i]);
     }
     return image;
 }
