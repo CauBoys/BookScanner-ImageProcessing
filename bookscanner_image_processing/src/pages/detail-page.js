@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 import '../style/detail.css'
 import {
   drawEraseSection,
@@ -14,6 +15,12 @@ const drawSection = () => {}
 export default function Detail() {
   const history = useHistory()
   const [checkErase, setCheckErase] = useState(false)
+  const id = Number(window.location.pathname.replace('/detail/', '')) + 1
+  const imageStore = useSelector((state) => state.image.imageFile)
+  const imageDate = imageStore.filter((image) => image.id === id)
+  const [constrast, setConstrast] = useState(50)
+  const [mosaic, setMosaic] = useState(50)
+  const [blur, setBlur] = useState(50)
 
   return (
     <div className="detail page">
