@@ -4,7 +4,7 @@
     <ShowAllFiles>false</ShowAllFiles>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LocalDebuggerCommandArguments>sample(1).jpg -c 60 -d 20 20 400 60 20 20 -b 20 60 400 100 60 -m 20 100 400 140 20</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>sample(2).jpg -d 20 20 800 1200 20 20</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
 </Project>

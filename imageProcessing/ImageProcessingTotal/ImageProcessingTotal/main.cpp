@@ -138,7 +138,7 @@ int main(int argc, char* argv[]) {
 	if (blurLoc > 0) {
 		if (blurLoc + 5 >= argc) {
 			printf("Blur value need to followed.\n");
-			printf("Usage : imageProcessing ${INPUT_FILE} -m ${START_X} ${START_Y} ${END_X} ${END_Y} ${INT_VALUE} \n");
+			printf("Usage : imageProcessing ${INPUT_FILE} -b ${START_X} ${START_Y} ${END_X} ${END_Y} ${INT_VALUE} \n");
 			return -1;
 		}
 		startX = atoi(argv[blurLoc + 1]);
