@@ -27,8 +27,6 @@ int main(int argc, char* argv[]) {
 		return -1;
 	}
 
-	int height = src.rows;
-	int width = src.cols;
 	Mat input = src.clone();
 	Mat dst;	// dst will be final saved file.
 
@@ -46,7 +44,7 @@ int main(int argc, char* argv[]) {
 			printf("Contrast value need to be 0 ~ 100 value.\n");
 			return -1;
 		}
-		dst = Mat::zeros(height, width, CV_8UC3);
+		dst = Mat::zeros(getHeight(src), getWidth(src), CV_8UC3);
 		contrast(input, dst, 1 + MULTI_VALUE * value);
 		input = dst.clone();	// Save at scaling Image with contrast changed version.
 	}
@@ -66,24 +64,24 @@ int main(int argc, char* argv[]) {
 		int backX = atoi(argv[deletionLoc + 5]);
 		int backY = atoi(argv[deletionLoc + 6]);
 
-		if (!check_coord_available(width, height, startX, startY)) {
+		if (!check_coord_available(getWidth(input), getHeight(input), startX, startY)) {
 			printf("start coord error...\n");
-			printf("Please input coord width : %d to %d and height %d to %d.\n", 0, width, 0, height);
+			printf("Please input coord width : %d to %d and height %d to %d.\n", 0, getWidth(input), 0, getHeight(input));
 			return -1;
 		}
 
-		if (!check_coord_available(width, height, endX, endY)) {
+		if (!check_coord_available(getWidth(input), getHeight(input), endX, endY)) {
 			printf("end coord error...\n");
-			printf("Please input coord width : %d to %d and height %d to %d.\n", 0, width, 0, height);
+			printf("Please input coord width : %d to %d and height %d to %d.\n", 0, getWidth(input), 0, getHeight(input));
 			return -1;
 		}
 
-		if (!check_coord_available(width, height, backX, backY)) {
+		if (!check_coord_available(getWidth(input), getHeight(input), backX, backY)) {
 			printf("back coord error...\n");
-			printf("Please input coord width : %d to %d and height %d to %d.\n", 0, width, 0, height);
+			printf("Please input coord width : %d to %d and height %d to %d.\n", 0, getWidth(input), 0, getHeight(input));
 			return -1;
 		}
-		dst = Mat::zeros(height, width, CV_8UC3);
+		dst = Mat::zeros(getHeight(input), getWidth(input), CV_8UC3);
 		image_deleteion(input, dst, startX, startY, endX, endY, backX, backY);
 		input = dst.clone();	// Save at scaling Image with deleted version.
 	}
@@ -97,18 +95,18 @@ int main(int argc, char* argv[]) {
 		endX = atoi(argv[mosiacLoc + 3]);
 		endY = atoi(argv[mosiacLoc + 4]);
 		value = atoi(argv[mosiacLoc + 4]);
-		if (!check_coord_available(width, height, startX, startY)) {
+		if (!check_coord_available(getWidth(input), getHeight(input), startX, startY)) {
 			printf("start coord error...\n");
 			return 0;
 		}
 
-		if (!check_coord_available(width, height, endX, endY)) {
+		if (!check_coord_available(getWidth(input), getHeight(input), endX, endY)) {
 			printf("end coord error...\n");
 			return 0;
 		}
 		windowX = WINDOW_SIZE * value;
 		windowY = WINDOW_SIZE * value;
-		dst = Mat::zeros(height, width, CV_8UC3);
+		dst = Mat::zeros(getHeight(input), getWidth(input), CV_8UC3);
 
 		image_mosiac(input, dst, startX, startY, endX, endY, windowX, windowY);
 		input = dst.clone();	// Save at scaling Image with deleted version.
@@ -122,12 +120,12 @@ int main(int argc, char* argv[]) {
 		endX = atoi(argv[blurLoc + 3]);
 		endY = atoi(argv[blurLoc + 4]);
 		value = atoi(argv[blurLoc + 4]);
-		if (!check_coord_available(width, height, startX, startY)) {
+		if (!check_coord_available(getWidth(input), getHeight(input), startX, startY)) {
 			printf("start coord error...\n");
 			return 0;
 		}
 
-		if (!check_coord_available(width, height, endX, endY)) {
+		if (!check_coord_available(getWidth(input), getHeight(input), endX, endY)) {
 			printf("end coord error...\n");
 			return 0;
 		}
@@ -144,8 +142,8 @@ int main(int argc, char* argv[]) {
 	if (addImg.empty()) {
 		printf("Could not open or find the logo!\n");
 	} else {
-		dst = Mat::zeros(height, width, CV_8UC3);
-		imageAddTo(input, addImg, dst, width - addImg.cols - 40, height - addImg.rows - 40);
+		dst = Mat::zeros(getHeight(input), getWidth(input), CV_8UC3);
+		imageAddTo(input, addImg, dst, getWidth(input) - addImg.cols - 40, getHeight(input) - addImg.rows - 40);
 	}
 	imwrite(saveFile2, dst);
 	return 0;

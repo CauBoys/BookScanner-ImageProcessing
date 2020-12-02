@@ -67,3 +67,11 @@ int checkDeletionOption(int argc, char* argv[]) {
 	}
 	return -1;
 }
+
+int getHeight(Mat img) {
+	return img.rows;
+}
+
+int getWidth(Mat img) {
+	return img.cols;
+}
