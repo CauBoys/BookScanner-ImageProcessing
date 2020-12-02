@@ -129,7 +129,7 @@ Mat arrange_image(Mat origin)
         //it generally works without below for... if it doesn't work well for some image, than I'll check out.
         //for (int i = 0; i < squares.size(); i++) {
         // draw contour
-        cv::drawContours(image, squares, i, cv::Scalar(255, 0, 0), 5, 8, std::vector<cv::Vec4i>(), 0, cv::Point()); // blue
+        cv::drawContours(image, squares, i, cv::Scalar(255, 0, 0), 5, 8, vector<cv::Vec4i>(), 0, cv::Point()); // blue
         // draw bounding rect
         cv::Rect rect = boundingRect(cv::Mat(squares[i]));
         cv::rectangle(image, rect.tl(), rect.br(), cv::Scalar(0, 255, 0), 2, 8, 0); // green

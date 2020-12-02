@@ -42,7 +42,7 @@ void showPictures(Mat img, string saveFile) {
         string loc = saveFile + "_" + to_string(i) + ".jpg";
         Mat crop = img(boundingRect(cv::Mat(contours[i])));
         imwrite(loc, crop);
-        std::cout << loc << std::endl;
+        cout << loc << endl;
     }
 
 }
