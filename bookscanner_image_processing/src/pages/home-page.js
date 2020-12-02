@@ -68,11 +68,6 @@ export default function Home() {
   const handleSaveClick = () => {
     for (var i = 0; i < nextId.current - 1; i++) {
       const link = document.createElement('a')
-      // encodeBase64ImageTagviaFileReader(imageStore[i].new_url).then(
-      //   (response) => {
-      //     console.log(response)
-      //   }
-      // )
       link.href = imageStore[i].url
 
       link.download = `${imageStore[i].img.name}`
