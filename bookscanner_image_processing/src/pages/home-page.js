@@ -84,7 +84,7 @@ export default function Home() {
   const handleSaveClick = () => {
     for (var i = 0; i < nextId.current - 1; i++) {
       const link = document.createElement('a')
-      link.href = imageStore[i].url
+      link.href = imageStore[i].new_url
       link.download = `${imageStore[i].img.name}`
       link.click()
     }
@@ -92,7 +92,6 @@ export default function Home() {
   const handleClick = (event) => {
     hiddenFileInput.current.click()
   }
-  console.log(nextId.current)
   const handleChange = async (event) => {
     event.preventDefault()
     let reader = new FileReader()

@@ -1,4 +1,4 @@
-import { BASE_URL } from '../common/common'
+import { BASE_URL, toDataUrl } from '../common/common'
 //Action Type
 const IMAGE_UPLOAD = 'image/IMAGE_UPLOAD'
 const IMAGE_DELETE = 'image/IMAGE_DELETE'
@@ -25,13 +25,13 @@ export const findImage = (images) => async (dispatch, getState) => {
 
     const requestImage = () => {
       return new Promise((res, rej) => {
-        fetch(BASE_URL + 'ip/find', requestOptions)
+        fetch(BASE_URL + 'ip/cutAndFind', requestOptions)
           .then((response) => response.json())
           .then((result) => {
             return result
           })
           .then((result) => {
-            downloadImage(result.fileName)
+            downloadImage(result.subFileName, 'array')
               .then((req) => {
                 res(req)
               })
@@ -62,13 +62,13 @@ export const addWaterMark = (images) => async (dispatch, getState) => {
 
     const requestImage = () => {
       return new Promise((res, rej) => {
-        fetch(BASE_URL + 'ip/add', requestOptions)
+        fetch(BASE_URL + 'ip/cutAndAdd', requestOptions)
           .then((response) => response.json())
           .then((result) => {
             return result
           })
           .then((result) => {
-            downloadImage(result.fileName)
+            downloadImage(result.fileName, 'element')
               .then((req) => {
                 res(req)
               })
@@ -87,11 +87,22 @@ export const addWaterMark = (images) => async (dispatch, getState) => {
   })
 }
 
-export const downloadImage = (fileName) => {
+export const downloadImage = (fileName, type) => {
   return new Promise((res, rej) => {
-    fetch(BASE_URL + `file/download/${fileName}`).then((result) => {
-      res(result.url)
-    })
+    type == 'element'
+      ? fetch(BASE_URL + `file/download/${fileName}`).then((result) => {
+          toDataUrl(result.url, function (myBase64) {
+            res(myBase64)
+          })
+        })
+      : fileName.forEach((item) => {
+          console.log(item)
+          fetch(BASE_URL + `file/download/${item}`).then((result) => {
+            toDataUrl(result.url, function (myBase64) {
+              res(myBase64)
+            })
+          })
+        })
   })
 }
 
