@@ -57,7 +57,7 @@ void image_blur(Mat img, Mat dst, int startX, int startY, int endX, int endY, in
 
 // Etc Functions
 double angle(cv::Point pt1, cv::Point pt2, cv::Point pt0);
-Mat rotate(vector<Point> not_a_rect_shape);
+Mat rotate(Mat img, vector<Point> not_a_rect_shape);
 
 int check_coord_available(int width, int height, int x, int y);
 int grayAt(Mat img, int x, int y);
