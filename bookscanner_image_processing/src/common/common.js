@@ -14,18 +14,16 @@ export const DEEP_CLONE = (obj) => {
   return result
 }
 
-export const encodeBase64ImageTagviaFileReader = (url) => {
-  return new Promise((resolve, reject) => {
-    let xhr = new XMLHttpRequest()
-    xhr.onload = () => {
-      let reader = new FileReader()
-      reader.onloadend = function () {
-        resolve(reader.result)
-      }
-      reader.readAsDataURL(xhr.response)
+export const toDataUrl = (url, callback) => {
+  var xhr = new XMLHttpRequest()
+  xhr.onload = function () {
+    var reader = new FileReader()
+    reader.onloadend = function () {
+      callback(reader.result)
     }
-    xhr.open('GET', url)
-    xhr.responseType = 'blob'
-    xhr.send()
-  })
+    reader.readAsDataURL(xhr.response)
+  }
+  xhr.open('GET', url)
+  xhr.responseType = 'blob'
+  xhr.send()
 }
