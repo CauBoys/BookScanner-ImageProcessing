@@ -36,7 +36,7 @@ void showPictures(Mat img, string saveFile) {
 
     /// Draw contours
     Mat drawing = Mat::zeros(img.size(), CV_8UC3);
-    namedWindow("test", WINDOW_NORMAL);
+
     for (int i = 0; i < contours.size(); i++)
     {
         string loc = saveFile + "_" + to_string(i) + ".jpg";

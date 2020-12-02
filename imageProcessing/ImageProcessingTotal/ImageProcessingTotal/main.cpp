@@ -11,6 +11,10 @@ int main(int argc, char* argv[]) {
 		printHelp();
 		return 0;
 	}
+	if (argc < 2) {
+		printHelp();
+		return -1;
+	}
 
 	string image(argv[1]);//image.jpg
 	if (strcmp(argv[1], "-e") == 0) {
@@ -20,14 +24,14 @@ int main(int argc, char* argv[]) {
 	string saveFile1 = makeOutputFileName(image);
 	string saveFile2 = saveFile1 + "_output.jpg";
 
-	src = imread(inputFile, IMREAD_COLOR); // Load an image
+	Mat input;
+	input = imread(inputFile, IMREAD_COLOR); // Load an image
 
-	if (src.empty()) {
+	if (input.empty()) {
 		printf("Could not open or find the image!\n");
 		return -1;
 	}
 
-	Mat input = src.clone();
 	Mat dst;	// dst will be final saved file.
 
 	// Image Contrast Part
@@ -40,11 +44,11 @@ int main(int argc, char* argv[]) {
 			return -1;
 		}
 		value = atoi(argv[contrastLoc + 1]);
-		if (value < 0 || value > 100) {
+		if (value <= 0 || value > 100) {
 			printf("Contrast value need to be 0 ~ 100 value.\n");
 			return -1;
 		}
-		dst = Mat::zeros(getHeight(src), getWidth(src), CV_8UC3);
+		dst = Mat::zeros(getHeight(input), getWidth(input), CV_8UC3);
 		contrast(input, dst, 1 + MULTI_VALUE * value);
 		input = dst.clone();	// Save at scaling Image with contrast changed version.
 	}
@@ -57,6 +61,11 @@ int main(int argc, char* argv[]) {
 	int startX, startY, endX, endY;
 
 	if (deletionLoc > 0) {
+		if (contrastLoc + 6 >= argc) {
+			printf("Deletion value need to followed.\n");
+			printf("Usage : imageProcessing ${INPUT_FILE} -d ${START_X} ${START_Y} ${END_X} ${END_Y} ${BACK_X} ${BACK_Y} \n");
+			return -1;
+		}
 		startX = atoi(argv[deletionLoc + 1]);
 		startY = atoi(argv[deletionLoc + 2]);
 		endX = atoi(argv[deletionLoc + 3]);
@@ -90,11 +99,16 @@ int main(int argc, char* argv[]) {
 	int mosiacLoc = checkMosiacOption(argc, argv);
 	int windowX, windowY;
 	if (mosiacLoc > 0) {
+		if (mosiacLoc + 5 >= argc) {
+			printf("Mosiac value need to followed.\n");
+			printf("Usage : imageProcessing ${INPUT_FILE} -m ${START_X} ${START_Y} ${END_X} ${END_Y} ${INT_VALUE} \n");
+			return -1;
+		}
+
 		startX = atoi(argv[mosiacLoc + 1]);
 		startY = atoi(argv[mosiacLoc + 2]);
 		endX = atoi(argv[mosiacLoc + 3]);
 		endY = atoi(argv[mosiacLoc + 4]);
-		value = atoi(argv[mosiacLoc + 4]);
 		if (!check_coord_available(getWidth(input), getHeight(input), startX, startY)) {
 			printf("start coord error...\n");
 			return 0;
@@ -104,6 +118,13 @@ int main(int argc, char* argv[]) {
 			printf("end coord error...\n");
 			return 0;
 		}
+
+		value = atoi(argv[mosiacLoc + 5]);
+		if (value <= 0 || value > 100) {
+			printf("Mosiac value need to be 0 ~ 100 value.\n");
+			return -1;
+		}
+
 		windowX = WINDOW_SIZE * value;
 		windowY = WINDOW_SIZE * value;
 		dst = Mat::zeros(getHeight(input), getWidth(input), CV_8UC3);
@@ -115,11 +136,15 @@ int main(int argc, char* argv[]) {
 	// Image Blur
 	int blurLoc = checkBlurOption(argc, argv);
 	if (blurLoc > 0) {
+		if (blurLoc + 5 >= argc) {
+			printf("Blur value need to followed.\n");
+			printf("Usage : imageProcessing ${INPUT_FILE} -m ${START_X} ${START_Y} ${END_X} ${END_Y} ${INT_VALUE} \n");
+			return -1;
+		}
 		startX = atoi(argv[blurLoc + 1]);
 		startY = atoi(argv[blurLoc + 2]);
 		endX = atoi(argv[blurLoc + 3]);
 		endY = atoi(argv[blurLoc + 4]);
-		value = atoi(argv[blurLoc + 4]);
 		if (!check_coord_available(getWidth(input), getHeight(input), startX, startY)) {
 			printf("start coord error...\n");
 			return 0;
@@ -129,19 +154,28 @@ int main(int argc, char* argv[]) {
 			printf("end coord error...\n");
 			return 0;
 		}
+		value = atoi(argv[blurLoc + 5]);
+		if (value <= 0 || value > 100) {
+			printf("Blur value need to be 0 ~ 100 value.\n");
+			return -1;
+		}
+
 		windowX = WINDOW_SIZE * value;
 		windowY = WINDOW_SIZE * value;
 		blur(input, dst, Size(windowX, windowY), Point(-1, -1));
-		input = dst.clone();
+		// add_up image change input directly, so do not clone.
 		add_up_image(input, dst, startX, startY, endX, endY);	// Add up blurring part at original pictures.
-		input = dst.clone();
 	}	
-
+		
 	// Image Add Part
 	Mat addImg = imread("input/logo.png", IMREAD_UNCHANGED);	// Alpha Value Image need to read with IMREAD_UNCHANGED.
 	if (addImg.empty()) {
 		printf("Could not open or find the logo!\n");
-	} else {
+	} 
+	else {
+		Mat resizeAddImg;
+		double resizedRatio = (double)getWidth(input) / 3.0 / (double)getWidth(addImg);
+		resize(addImg, resizeAddImg, Size((int)(getWidth(addImg) * resizedRatio), (int)(getHeight(addImg)* resizedRatio)), 0, 0, CV_INTER_NN);
 		dst = Mat::zeros(getHeight(input), getWidth(input), CV_8UC3);
 		imageAddTo(input, addImg, dst, getWidth(input) - addImg.cols - 40, getHeight(input) - addImg.rows - 40);
 	}
@@ -158,10 +192,11 @@ void printHelp() {
 	printf("Third, we adjust extracted paper images sequence of contrast, blur, mosiac, deletion.\n");
 	printf("Belows are this program`s parameter.\n\n");
 	printf("Help.\n");
-	printf("imageProcessing -h");
+	printf("./imageProcessing -h\n\n");
 	printf("Example.\n");
-	printf("imageProcessing -e ${INPUT_FILE}");
-	printf("imageProcessing ${INPUT_FILE} ${OUTPUT_FILE}\n");
+	printf("./imageProcessing -e ${INPUT_FILE}\n\n");
+	printf("Use for general files.");
+	printf("./imageProcessing ${INPUT_FILE} ${OUTPUT_FILE}\n");
 	printf("If output file is not specificated, we will auto generate output files. Next options are optionable functions.\n");
 	printf("Contrast can be used like below.\n");
 	printf("-c ${VALUE}\n");
