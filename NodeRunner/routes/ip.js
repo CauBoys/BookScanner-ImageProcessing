@@ -36,13 +36,75 @@ router.post('/find', upload.single("img"), (req, res, next) => {
     
     nodeRunner.imageDetect(inputFileName, outputFileName).then((stdout) => {
         var files = stdout.split("\n");
+        var retFiles = [];
+        for(var i = 0; i < files.length; i++) {
+            if(files[i].length > 0) retFiles.push(uuid + "_" + String(i));
+        }
         res.json({
             result: true,
-            fileName: files
+            fileName: retFiles
         });
     })
     .catch((err) => {
         console.log(err);
+    });
+});
+
+router.post('/cutAndFind', upload.single("img"), (req, res, next) => {
+    var uuid = getUUID();
+    var outputFileName = config.fileList.imageUpload + uuid + ".jpg";
+    var inputFileName = config.fileList.imageUpload + req.file.filename;
+
+    nodeRunner.paperDetect(inputFileName, outputFileName)
+    .then((stdout) => {
+        // Detecting Paper.
+        nodeRunner.imageDetect(inputFileName, outputFileName).then((stdout) => {
+            var files = stdout.split("\n");
+            var retFiles = [];
+            for(var i = 0; i < files.length; i++) {
+                if(files[i].length > 0) retFiles.push(uuid + "_" + String(i));
+            }
+            res.json({
+                result: true,
+                cutFileName: uuid,
+                subFileName: retFiles
+            });
+        })
+        .catch((err) => {
+            console.log(err);
+            res.json({ result: false });
+        });
+    })
+    .catch((err) => {
+        console.log(err);
+        res.json({ result: false });
+    });
+});
+
+router.post('/cutAndAdd', upload.single("img"), (req, res, next) => {
+    var uuid1 = getUUID();
+    var uuid2 = getUUID();
+    var outputFileName1 = config.fileList.imageUpload + uuid1 + ".jpg";
+    var outputFileName2 = config.fileList.imageUpload + uuid2 + ".jpg";
+    var inputFileName = config.fileList.imageUpload + req.file.filename;
+
+    nodeRunner.paperDetect(inputFileName, outputFileName1)
+    .then((stdout) => {
+        // Detecting Paper.
+        nodeRunner.addWaterMark(outputFileName1, outputFileName2).then((stdout) => {
+            res.json({
+                result: true,
+                fileName: uuid2
+            });
+        })
+        .catch((err) => {
+            console.log(err);
+            res.json({ result: false });
+        });
+    })
+    .catch((err) => {
+        console.log(err);
+        res.json({ result: false });
     });
 });
 

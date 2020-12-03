@@ -53,9 +53,9 @@ function paperDetect(sourceFile, uuid) {
 }
 
 // 종이부분에서 사진 List를 찾는것.
-function imageDetect(sourceFile) {
+function imageDetect(sourceFile, uuid) {
     return new Promise((res, rej) => {
-        runShell('sh runner/imageDetect.sh ' + sourceFile).
+        runShell('sh runner/imageDetect.sh ' + sourceFile + " " + uuid).
         then((stdout) => {
             res(stdout);
         }).
