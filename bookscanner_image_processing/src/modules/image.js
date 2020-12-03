@@ -218,6 +218,41 @@ export const addDeletion = (
   })
 }
 
+export const addContrast = (image) => async (dispatch, getState) => {
+  const formdata = new FormData()
+  formdata.append('img', image.img)
+
+  const requestOptions = {
+    method: 'POST',
+    body: formdata,
+  }
+
+  const requestImage = () => {
+    return new Promise((res, rej) => {
+      fetch(BASE_URL + 'ip/cut', requestOptions)
+        .then((response) => response.json())
+        .then((result) => {
+          return result
+        })
+        .then((result) => {
+          downloadImage(result.fileName, 'element')
+            .then((req) => {
+              res(req)
+            })
+            .catch((err) => {
+              rej(err)
+            })
+        })
+        .catch((err) => {
+          rej(err)
+        })
+    })
+  }
+  requestImage().then((req) => {
+    dispatch({ type: IMAGE_PROCESSING_CONTRAST, id, new_url: req })
+  })
+}
+
   })
 }
 
