@@ -9,6 +9,43 @@ const IMAGE_PROCESSING_RESTORE = 'image/IMAGE_PROCESSING_RESTORE'
 export const imageUpload = (image) => ({ type: IMAGE_UPLOAD, image })
 export const imageDelete = (id) => ({ type: IMAGE_DELETE, id }) // 해당 id값을 가진 사진 전부 삭제
 //Thunk
+export const findImage = (images) => async (dispatch, getState) => {
+  images.forEach((image, id) => {
+    var formdata = new FormData()
+    formdata.append('img', image.img)
+    var requestOptions = {
+      method: 'POST',
+      body: formdata,
+    }
+
+    const requestImage = () => {
+      return new Promise((res, rej) => {
+        fetch(BASE_URL + 'ip/cutAndFind', requestOptions)
+          .then((response) => response.json())
+          .then((result) => {
+            return result
+          })
+          .then((result) => {
+            downloadImage(result.subFileName, 'array')
+              .then((req) => {
+                res(req)
+              })
+              .catch((err) => {
+                rej(err)
+              })
+          })
+          .catch((err) => {
+            rej(err)
+          })
+      })
+    }
+    requestImage().then((req) => {
+      console.log(req)
+      dispatch({ type: FIND_IMAGE, id, imgPart: req })
+    })
+  })
+}
+
 export const processMosaic = (image) => async (dispatch, getState) => {
   //모자이크 처리, c++로 image 정보 넘기고 결과를 다시 받아야함
   // const result = mosaicImage(image)
