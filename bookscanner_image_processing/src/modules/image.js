@@ -253,6 +253,22 @@ export const addContrast = (image) => async (dispatch, getState) => {
   })
 }
 
+export const downloadImage = (fileName, type) => {
+  return new Promise((res, rej) => {
+    type == 'element'
+      ? fetch(BASE_URL + `file/download/${fileName}`).then((result) => {
+          toDataUrl(result.url, function (myBase64) {
+            res(myBase64)
+          })
+        })
+      : fileName.forEach((item) => {
+          console.log(item)
+          fetch(BASE_URL + `file/download/${item}`).then((result) => {
+            toDataUrl(result.url, function (myBase64) {
+              res(myBase64)
+            })
+          })
+        })
   })
 }
 
