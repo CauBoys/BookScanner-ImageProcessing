@@ -46,6 +46,42 @@ export const findImage = (images) => async (dispatch, getState) => {
   })
 }
 
+export const addWaterMark = (images) => async (dispatch, getState) => {
+  images.forEach((image, id) => {
+    var formdata = new FormData()
+    formdata.append('img', image.img)
+    var requestOptions = {
+      method: 'POST',
+      body: formdata,
+    }
+
+    const requestImage = () => {
+      return new Promise((res, rej) => {
+        fetch(BASE_URL + 'ip/cutAndAdd', requestOptions)
+          .then((response) => response.json())
+          .then((result) => {
+            return result
+          })
+          .then((result) => {
+            downloadImage(result.fileName, 'element')
+              .then((req) => {
+                res(req)
+              })
+              .catch((err) => {
+                rej(err)
+              })
+          })
+          .catch((err) => {
+            rej(err)
+          })
+      })
+    }
+    requestImage().then((req) => {
+      dispatch({ type: ADD_WATERMARK, id, new_url: req })
+    })
+  })
+}
+//blur mosiac deletion contrast
 export const processMosaic = (image) => async (dispatch, getState) => {
   //모자이크 처리, c++로 image 정보 넘기고 결과를 다시 받아야함
   // const result = mosaicImage(image)
