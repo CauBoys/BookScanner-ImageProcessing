@@ -4,6 +4,7 @@ const IMAGE_DELETE = 'image/IMAGE_DELETE'
 const IMAGE_PROCESSING_MOSAIC = 'image/IMAGE_PROCESSING_MOSAIC'
 const IMAGE_PROCESSING_BLUR = 'image/IMAGE_PROCESSING_BLUR'
 const IMAGE_PROCESSING_DELETEION = 'image/IMAGE_PROCESSING_DELETION'
+const IMAGE_PROCESSING_CONTRAST = 'image/IMAGE_PROCESSING_CONTRAST'
 const IMAGE_PROCESSING_RESTORE = 'image/IMAGE_PROCESSING_RESTORE'
 //Action Function
 export const imageUpload = (image) => ({ type: IMAGE_UPLOAD, image })
@@ -183,7 +184,8 @@ export const addDeletion = (
   formdata.append('startY', startY)
   formdata.append('endX', endX)
   formdata.append('endY', endY)
-  formdata.append('value', value)
+  formdata.append('endY', backX)
+  formdata.append('endY', backY)
 
   const requestOptions = {
     method: 'POST',
@@ -192,7 +194,7 @@ export const addDeletion = (
 
   const requestImage = () => {
     return new Promise((res, rej) => {
-      fetch(BASE_URL + 'ip/mosiac', requestOptions)
+      fetch(BASE_URL + 'ip/deletion', requestOptions)
         .then((response) => response.json())
         .then((result) => {
           return result
@@ -212,7 +214,10 @@ export const addDeletion = (
     })
   }
   requestImage().then((req) => {
-    dispatch({ type: IMAGE_PROCESSING_MOSAIC, id, new_url: req })
+    dispatch({ type: IMAGE_PROCESSING_DELETEION, id, new_url: req })
+  })
+}
+
   })
 }
 
