@@ -42,6 +42,9 @@ export default function Detail() {
           className="canvas"
           style={{
             backgroundImage: `url(${imageDate[0].url})`,
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: 'contain',
+            backgroundPosition: 'center center',
           }}
         ></canvas>
         <div className="adjustImg">
