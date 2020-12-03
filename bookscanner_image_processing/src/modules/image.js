@@ -125,6 +125,48 @@ export const addBlur = (image, startX, startY, endX, endY, value) => async (
   })
 }
 
+export const addMosiac = (image, startX, startY, endX, endY, value) => async (
+  dispatch,
+  getState
+) => {
+  const formdata = new FormData()
+  formdata.append('img', image.img)
+  formdata.append('startX', startX)
+  formdata.append('startY', startY)
+  formdata.append('endX', endX)
+  formdata.append('endY', endY)
+  formdata.append('value', value)
+
+  const requestOptions = {
+    method: 'POST',
+    body: formdata,
+  }
+
+  const requestImage = () => {
+    return new Promise((res, rej) => {
+      fetch(BASE_URL + 'ip/mosiac', requestOptions)
+        .then((response) => response.json())
+        .then((result) => {
+          return result
+        })
+        .then((result) => {
+          downloadImage(result.fileName, 'element')
+            .then((req) => {
+              res(req)
+            })
+            .catch((err) => {
+              rej(err)
+            })
+        })
+        .catch((err) => {
+          rej(err)
+        })
+    })
+  }
+  requestImage().then((req) => {
+    dispatch({ type: IMAGE_PROCESSING_MOSAIC, id, new_url: req })
+  })
+}
 export const processMosaic = (image) => async (dispatch, getState) => {
   //모자이크 처리, c++로 image 정보 넘기고 결과를 다시 받아야함
   // const result = mosaicImage(image)
