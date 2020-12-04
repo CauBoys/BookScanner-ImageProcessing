@@ -5,6 +5,7 @@ const IMAGE_DELETE = 'image/IMAGE_DELETE'
 const IMAGE_PROCESSING_MOSAIC = 'image/IMAGE_PROCESSING_MOSAIC'
 const IMAGE_PROCESSING_BLUR = 'image/IMAGE_PROCESSING_BLUR'
 const IMAGE_PROCESSING_DELETEION = 'image/IMAGE_PROCESSING_DELETION'
+const IMAGE_PROCESSING_CONTRAST = 'image/IMAGE_PROCESSING_CONTRAST'
 const IMAGE_PROCESSING_RESTORE = 'image/IMAGE_PROCESSING_RESTORE'
 const ADD_WATERMARK = 'image/ADD_WATERMARK'
 const FIND_IMAGE = 'image/FIND_IMAGE'
@@ -18,7 +19,6 @@ export const findImage = (images) => async (dispatch, getState) => {
   images.forEach((image, id) => {
     var formdata = new FormData()
     formdata.append('img', image.img)
-    console.log(image)
     var requestOptions = {
       method: 'POST',
       body: formdata,
@@ -85,6 +85,177 @@ export const addWaterMark = (images) => async (dispatch, getState) => {
     requestImage().then((req) => {
       dispatch({ type: ADD_WATERMARK, id, new_url: req })
     })
+  })
+}
+
+//blur mosiac deletion contrast
+export const addBlur = (image, startX, startY, endX, endY, value) => async (
+  dispatch,
+  getState
+) => {
+  const formdata = new FormData()
+  formdata.append('img', image.img)
+  formdata.append('startX', startX)
+  formdata.append('startY', startY)
+  formdata.append('endX', endX)
+  formdata.append('endY', endY)
+  formdata.append('value', value)
+
+  const requestOptions = {
+    method: 'POST',
+    body: formdata,
+  }
+
+  const requestImage = () => {
+    return new Promise((res, rej) => {
+      fetch(BASE_URL + 'ip/blur', requestOptions)
+        .then((response) => response.json())
+        .then((result) => {
+          return result
+        })
+        .then((result) => {
+          downloadImage(result.fileName, 'element')
+            .then((req) => {
+              res(req)
+            })
+            .catch((err) => {
+              rej(err)
+            })
+        })
+        .catch((err) => {
+          rej(err)
+        })
+    })
+  }
+  requestImage().then((req) => {
+    dispatch({ type: IMAGE_PROCESSING_BLUR, id, new_url: req })
+  })
+}
+
+export const addMosiac = (image, startX, startY, endX, endY, value) => async (
+  dispatch,
+  getState
+) => {
+  const formdata = new FormData()
+  formdata.append('img', image.img)
+  formdata.append('startX', startX)
+  formdata.append('startY', startY)
+  formdata.append('endX', endX)
+  formdata.append('endY', endY)
+  formdata.append('value', value)
+
+  const requestOptions = {
+    method: 'POST',
+    body: formdata,
+  }
+
+  const requestImage = () => {
+    return new Promise((res, rej) => {
+      fetch(BASE_URL + 'ip/mosiac', requestOptions)
+        .then((response) => response.json())
+        .then((result) => {
+          return result
+        })
+        .then((result) => {
+          downloadImage(result.fileName, 'element')
+            .then((req) => {
+              res(req)
+            })
+            .catch((err) => {
+              rej(err)
+            })
+        })
+        .catch((err) => {
+          rej(err)
+        })
+    })
+  }
+  requestImage().then((req) => {
+    dispatch({ type: IMAGE_PROCESSING_MOSAIC, id, new_url: req })
+  })
+}
+
+export const addDeletion = (
+  image,
+  startX,
+  startY,
+  endX,
+  endY,
+  backX,
+  backY
+) => async (dispatch, getState) => {
+  const formdata = new FormData()
+  formdata.append('img', image.img)
+  formdata.append('startX', startX)
+  formdata.append('startY', startY)
+  formdata.append('endX', endX)
+  formdata.append('endY', endY)
+  formdata.append('endY', backX)
+  formdata.append('endY', backY)
+
+  const requestOptions = {
+    method: 'POST',
+    body: formdata,
+  }
+
+  const requestImage = () => {
+    return new Promise((res, rej) => {
+      fetch(BASE_URL + 'ip/deletion', requestOptions)
+        .then((response) => response.json())
+        .then((result) => {
+          return result
+        })
+        .then((result) => {
+          downloadImage(result.fileName, 'element')
+            .then((req) => {
+              res(req)
+            })
+            .catch((err) => {
+              rej(err)
+            })
+        })
+        .catch((err) => {
+          rej(err)
+        })
+    })
+  }
+  requestImage().then((req) => {
+    dispatch({ type: IMAGE_PROCESSING_DELETEION, id, new_url: req })
+  })
+}
+
+export const addContrast = (image) => async (dispatch, getState) => {
+  const formdata = new FormData()
+  formdata.append('img', image.img)
+
+  const requestOptions = {
+    method: 'POST',
+    body: formdata,
+  }
+
+  const requestImage = () => {
+    return new Promise((res, rej) => {
+      fetch(BASE_URL + 'ip/cut', requestOptions)
+        .then((response) => response.json())
+        .then((result) => {
+          return result
+        })
+        .then((result) => {
+          downloadImage(result.fileName, 'element')
+            .then((req) => {
+              res(req)
+            })
+            .catch((err) => {
+              rej(err)
+            })
+        })
+        .catch((err) => {
+          rej(err)
+        })
+    })
+  }
+  requestImage().then((req) => {
+    dispatch({ type: IMAGE_PROCESSING_CONTRAST, id, new_url: req })
   })
 }
 
