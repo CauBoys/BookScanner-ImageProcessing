@@ -82,30 +82,28 @@ export default function Detail() {
             <p className="adjust_title" onClick={() => setCheckMode(4)}>
               const
             </p>
-            {
-              checkMode === 4 ? (
-                <div className="adjust_content">
-                  <input
-                    type="range"
-                    id="constrastRange"
-                    min="0"
-                    max="100"
-                    value={constrast}
-                    step="1"
-                    onChange={() =>
-                      setConstrast(
-                        document.querySelector('#constrastRange').value
-                      )
-                    }
-                  />
-                </div>
-              ) : (
-                <div></div>
-              )
-              /* <RangeSlider value="0" onChange={(changeEvent) => {}} /> */
-            }
-            <p>Erase</p>
             {checkMode === 4 ? (
+              <div className="adjust_content">
+                <input
+                  type="range"
+                  id="constrastRange"
+                  min="0"
+                  max="100"
+                  value={constrast}
+                  step="1"
+                  onChange={() => {
+                    setConstrast(
+                      document.querySelector('#constrastRange').value
+                    )
+                    setCheckErase(false)
+                  }}
+                />
+              </div>
+            ) : (
+              <div className="adjust_content"></div>
+            )}
+            <p onClick={() => setCheckMode(3)}>Erase</p>
+            {checkMode === 3 ? (
               <img
                 onClick={() => {
                   setCheckErase(!checkErase)
@@ -119,26 +117,30 @@ export default function Detail() {
             )}
             {checkErase ? (
               <>
-                <p className="adjust_title" onClick={() => setCheckMode(2)}>
+                <p className="adjust_title" onClick={() => setCheckMode(6)}>
                   mosaic
                 </p>
-                <div className="adjust_content">
-                  <input
-                    type="range"
-                    id="mosaicRange"
-                    min="0"
-                    max="100"
-                    value={mosaic}
-                    step="1"
-                    onChange={() =>
-                      setMosaic(document.querySelector('#mosaicRange').value)
-                    }
-                  />
-                </div>
-                <p className="adjust_title" onClick={() => setCheckMode(1)}>
+                {checkMode === 6 ? (
+                  <div className="adjust_content">
+                    <input
+                      type="range"
+                      id="mosaicRange"
+                      min="0"
+                      max="100"
+                      value={mosaic}
+                      step="1"
+                      onChange={() =>
+                        setMosaic(document.querySelector('#mosaicRange').value)
+                      }
+                    />
+                  </div>
+                ) : (
+                  <div className="adjust_content"></div>
+                )}
+                <p className="adjust_title" onClick={() => setCheckMode(2)}>
                   blur
                 </p>
-                {checkMode === 1 ? (
+                {checkMode === 2 ? (
                   <div className="adjust_content">
                     <input
                       type="range"
@@ -151,15 +153,14 @@ export default function Detail() {
                         setBlur(document.querySelector('#blurRange').value)
                       }
                     />
-                    {/* <RangeSlider value="0" onChange={(changeEvent) => {}} /> */}
                   </div>
                 ) : (
                   <div></div>
                 )}
-                <p className="adjust_title" onClick={() => setCheckMode(3)}>
+                <p className="adjust_title" onClick={() => setCheckMode(1)}>
                   delete
                 </p>
-                {checkMode === 3 ? (
+                {checkMode === 1 ? (
                   <div className="adjust_content">
                     <img
                       onClick={() => endPainting()}
