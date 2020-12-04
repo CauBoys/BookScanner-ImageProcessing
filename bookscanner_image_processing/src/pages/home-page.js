@@ -1,5 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react'
-import { NextButtons } from '../components/nextButton'
+import { useHistory } from 'react-router-dom'
+import { Button as Btn } from 'react-bootstrap'
 import {
   Button,
   Card,
@@ -56,7 +57,7 @@ export default function Home() {
   const [buttonBlock, setButtonBlock] = useState(true)
   const imageStore = useSelector((state) => state.image.imageFile)
   const dispatch = useDispatch()
-
+  console.log(image)
   const imgUpload = useCallback((image) => dispatch(imageUpload(image)), [
     dispatch,
   ])
@@ -81,6 +82,24 @@ export default function Home() {
       setButtonBlock(true)
     }
   }, [nextId.current])
+
+  const NextButtons = ({ path, name, id }) => {
+    const history = useHistory()
+    return (
+      <div>
+        <Btn
+          variant="primary"
+          onClick={() => {
+            imgWaterMark(imageStore).then(() => {
+              history.push(`${path}/${id}`)
+            })
+          }}
+        >
+          {name}
+        </Btn>
+      </div>
+    )
+  }
 
   const handleSaveClick = () => {
     for (var i = 0; i < nextId.current - 1; i++) {

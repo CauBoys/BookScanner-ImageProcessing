@@ -88,7 +88,7 @@ export default function Detail() {
           onMouseUp={() => endLocation(this)}
           className="canvas"
           style={{
-            backgroundImage: `url(${imageDate[0].url})`,
+            backgroundImage: `url(${imageDate[0].new_url})`,
             backgroundRepeat: 'no-repeat',
             backgroundSize: 'contain',
             backgroundPosition: 'center center',
