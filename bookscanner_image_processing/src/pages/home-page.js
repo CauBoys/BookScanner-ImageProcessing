@@ -149,7 +149,7 @@ export default function Home() {
                 className="Next-Button"
                 path="/detail"
                 name="Go"
-                id={imgId}
+                id={item.id - 1}
               />
             </Card.Body>
           </Card>
