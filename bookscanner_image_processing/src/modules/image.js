@@ -82,7 +82,6 @@ export const addWaterMark = (images) => async (dispatch, getState) => {
       method: 'POST',
       body: formdata,
     }
-    console.log(image.img)
     const requestImage = () => {
       return new Promise((res, rej) => {
         fetch(BASE_URL + 'ip/cutAndAdd', requestOptions)

@@ -173,7 +173,9 @@ export default function Home() {
               ) == true
             ) {
               imgWaterMark(imageStore)
-              handleSaveClick()
+              setTimeout(() => {
+                handleSaveClick()
+              }, 3000)
             } else {
               return false
             }
