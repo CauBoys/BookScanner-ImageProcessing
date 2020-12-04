@@ -1,12 +1,29 @@
+import React from 'react'
+import {
+  Link,
+  Route,
+  useHistory,
+  Switch,
+  BrowserRouter as Router,
+} from 'react-router-dom'
+import Home from './pages/home-page'
+import intro from './pages/intro-page'
+import detail from './pages/detail-page'
 import './App.css'
 import { Detail } from './page/Detail'
 // import { Home } from './page/Home'
 
 function App() {
   return (
-    <div className="App">
-      <Detail />
-    </div>
+    <Router>
+      <main>
+        <Switch>
+          <Route exact path="/" component={intro} />
+          <Route path="/home" component={Home} />
+          <Route path="/detail" component={detail} />
+        </Switch>
+      </main>
+    </Router>
   )
 }
 

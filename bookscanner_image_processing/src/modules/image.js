@@ -1,3 +1,4 @@
+import { BASE_URL, toDataUrl } from '../common/common'
 //Action Type
 const IMAGE_UPLOAD = 'image/IMAGE_UPLOAD'
 const IMAGE_DELETE = 'image/IMAGE_DELETE'
@@ -6,9 +7,13 @@ const IMAGE_PROCESSING_BLUR = 'image/IMAGE_PROCESSING_BLUR'
 const IMAGE_PROCESSING_DELETEION = 'image/IMAGE_PROCESSING_DELETION'
 const IMAGE_PROCESSING_CONTRAST = 'image/IMAGE_PROCESSING_CONTRAST'
 const IMAGE_PROCESSING_RESTORE = 'image/IMAGE_PROCESSING_RESTORE'
+const ADD_WATERMARK = 'image/ADD_WATERMARK'
+const FIND_IMAGE = 'image/FIND_IMAGE'
+
 //Action Function
-export const imageUpload = (image) => ({ type: IMAGE_UPLOAD, image })
 export const imageDelete = (id) => ({ type: IMAGE_DELETE, id }) // 해당 id값을 가진 사진 전부 삭제
+export const imageUpload = (image) => ({ type: IMAGE_UPLOAD, image })
+
 //Thunk
 export const findImage = (images) => async (dispatch, getState) => {
   images.forEach((image, id) => {
@@ -82,6 +87,7 @@ export const addWaterMark = (images) => async (dispatch, getState) => {
     })
   })
 }
+
 //blur mosiac deletion contrast
 export const addBlur = (image, startX, startY, endX, endY, value) => async (
   dispatch,
@@ -255,20 +261,24 @@ export const addContrast = (image) => async (dispatch, getState) => {
 
 export const downloadImage = (fileName, type) => {
   return new Promise((res, rej) => {
+    let imgArray = []
     type == 'element'
       ? fetch(BASE_URL + `file/download/${fileName}`).then((result) => {
           toDataUrl(result.url, function (myBase64) {
             res(myBase64)
           })
         })
-      : fileName.forEach((item) => {
-          console.log(item)
-          fetch(BASE_URL + `file/download/${item}`).then((result) => {
+      : fileName.forEach(async (item) => {
+          await fetch(BASE_URL + `file/download/${item}`).then((result) => {
             toDataUrl(result.url, function (myBase64) {
-              res(myBase64)
+              imgArray.push(myBase64)
             })
           })
         })
+    //임시방편
+    setTimeout(() => {
+      res(imgArray)
+    }, 5000)
   })
 }
 
@@ -316,7 +326,7 @@ const initialState = {
         xMax: 0,
         yMax: 0,
       },
-      uri: null,
+      url: null,
     },
     {
       id: 0,
@@ -329,22 +339,22 @@ const initialState = {
         xMax: 50,
         yMax: 50,
       },
-      uri: null,
+      url: null,
     },
     */
-    {
-      id: 0,
-      type_process: 'M', //모자이크 2번
-      type_id: 1,
-      name: 'LOGO',
-      selectRectZone: {
-        xMin: 100,
-        yMin: 100,
-        xMax: 200,
-        yMax: 200,
-      },
-      uri: null,
-    },
+    // {
+    //   file: '',
+    //   id: 0,
+    //   type_process: 'M', //모자이크 2번
+    //   type_id: 1,
+    //   selectRectZone: {
+    //     xMin: 100,
+    //     yMin: 100,
+    //     xMax: 200,
+    //     yMax: 200,
+    //   },
+    //   url: null,
+    // },
   ],
   //원본의 이미지에 영상처리(모자이크 등)을 가했을때 복구하기 위한 버퍼이미지
   bufferImage: [
@@ -359,7 +369,7 @@ const initialState = {
         xMax: 0,
         yMax: 0,
       },
-      uri: null,
+      url: null,
     },
     {
       id: 0,
@@ -372,7 +382,7 @@ const initialState = {
         xMax: 50,
         yMax: 50,
       },
-      uri: null,
+      url: null,
     },
   ],
 }
@@ -383,19 +393,38 @@ export default function image(state = initialState, action) {
     case IMAGE_UPLOAD:
       return {
         ...state,
-        imageFile: [...state.imageFile, ...action.image],
+        // imageFile: [...state.imageFile, action.image],
+        imageFile: state.imageFile.concat(action.image),
+      }
+    case ADD_WATERMARK:
+      return {
+        ...state,
+        imageFile: state.imageFile.map((item) =>
+          item.id === action.id + 1
+            ? { ...item, new_url: action.new_url }
+            : item
+        ),
+      }
+    case FIND_IMAGE:
+      return {
+        ...state,
+        imageFile: state.imageFile.map((item) =>
+          item.id === action.id + 1
+            ? { ...item, imgPart: action.imgPart }
+            : item
+        ),
       }
     case IMAGE_DELETE:
       return {
         ...state,
         imageFile: state.imageFile.filter((v) => v.id !== action.id),
-        bufferImage: state.bufferImage.filter((v) => v.id !== action.id),
+        // bufferImage: state.bufferImage.filter((v) => v.id !== action.id),
       }
     case IMAGE_PROCESSING_MOSAIC:
       return {
         ...state,
         imageFile: [...action.result],
-        bufferImage: [...state.bufferImage, ...action.image],
+        bufferImage: [...state.bufferImage, action.image],
       }
     case IMAGE_PROCESSING_RESTORE:
       return {
@@ -410,7 +439,7 @@ export default function image(state = initialState, action) {
             )
         ),
         //이전 상태의 image 불러옴
-        imageFile: [...state.imageFile, ...action.original],
+        imageFile: [...state.imageFile, action.original],
         //불러온 버퍼의 이미지 삭제
         bufferImage: state.bufferImage.filter(
           (v) =>
