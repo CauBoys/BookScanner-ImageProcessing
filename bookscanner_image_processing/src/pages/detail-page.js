@@ -61,7 +61,13 @@ export default function Detail() {
       </div>
       <div className="title">
         <p>Adjust Image</p>
-        <Button variant="primary" className="DownloadButton" onClick={() => {}}>
+        <Button
+          variant="primary"
+          className="DownloadButton"
+          onClick={() => {
+            imgMosiac(imageDate, id, 100, 100, 500, 500, 10)
+          }}
+        >
           Save
         </Button>
       </div>

@@ -182,7 +182,6 @@ export const addMosiac = (
         .then((result) => {
           downloadImage(result.fileName, 'element')
             .then((req) => {
-              console.log(req)
               res(req)
             })
             .catch((err) => {
