@@ -10,12 +10,12 @@ import {
 import { useHistory } from 'react-router-dom'
 import { addBlur, addMosiac, addDeletion, addContrast } from '../modules/image'
 
-const getLocation = () => {}
-
-const drawSection = () => {}
-
 export default function Detail() {
   const history = useHistory()
+  const [locationStartX, setLocationStartX] = useState(0)
+  const [locationStartY, setLocationStartY] = useState(0)
+  const [locationEndX, setLocationEndX] = useState(0)
+  const [locationEndY, setLocationEndY] = useState(0)
   const [checkMode, setCheckMode] = useState(0)
   const [checkErase, setCheckErase] = useState(false)
   const id = Number(window.location.pathname.replace('/detail/', '')) + 1
@@ -25,6 +25,15 @@ export default function Detail() {
   const [mosaic, setMosaic] = useState(50)
   const [blur, setBlur] = useState(50)
   const dispatch = useDispatch()
+
+  const startLocation = (event) => {
+    console.log(event)
+  }
+
+  const endLocation = (event) => {
+    setLocationEndX(event.offsetX)
+    setLocationEndY(event.offsetY)
+  }
 
   const imgBlur = useCallback(
     (image, startX, startY, endX, endY, value) =>
@@ -75,6 +84,8 @@ export default function Detail() {
         {/* <div className="showImg"></div> */}
         <canvas
           id="jsCanvas"
+          onMouseDown={() => startLocation(this)}
+          onMouseUp={() => endLocation(this)}
           className="canvas"
           style={{
             backgroundImage: `url(${imageDate[0].url})`,
