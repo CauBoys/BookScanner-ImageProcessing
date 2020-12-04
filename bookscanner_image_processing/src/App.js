@@ -10,6 +10,8 @@ import Home from './pages/home-page'
 import intro from './pages/intro-page'
 import detail from './pages/detail-page'
 import './App.css'
+import { Detail } from './page/Detail'
+// import { Home } from './page/Home'
 
 function App() {
   return (

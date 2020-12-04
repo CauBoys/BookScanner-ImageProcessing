@@ -256,22 +256,197 @@ export const addContrast = (image) => async (dispatch, getState) => {
   })
 }
 
+//blur mosiac deletion contrast
+export const addBlur = (image, startX, startY, endX, endY, value) => async (
+  dispatch,
+  getState
+) => {
+  const formdata = new FormData()
+  formdata.append('img', image.img)
+  formdata.append('startX', startX)
+  formdata.append('startY', startY)
+  formdata.append('endX', endX)
+  formdata.append('endY', endY)
+  formdata.append('value', value)
+
+  const requestOptions = {
+    method: 'POST',
+    body: formdata,
+  }
+
+  const requestImage = () => {
+    return new Promise((res, rej) => {
+      fetch(BASE_URL + 'ip/blur', requestOptions)
+        .then((response) => response.json())
+        .then((result) => {
+          return result
+        })
+        .then((result) => {
+          downloadImage(result.fileName, 'element')
+            .then((req) => {
+              res(req)
+            })
+            .catch((err) => {
+              rej(err)
+            })
+        })
+        .catch((err) => {
+          rej(err)
+        })
+    })
+  }
+  requestImage().then((req) => {
+    dispatch({ type: IMAGE_PROCESSING_BLUR, id, new_url: req })
+  })
+}
+
+export const addMosiac = (image, startX, startY, endX, endY, value) => async (
+  dispatch,
+  getState
+) => {
+  const formdata = new FormData()
+  formdata.append('img', image.img)
+  formdata.append('startX', startX)
+  formdata.append('startY', startY)
+  formdata.append('endX', endX)
+  formdata.append('endY', endY)
+  formdata.append('value', value)
+
+  const requestOptions = {
+    method: 'POST',
+    body: formdata,
+  }
+
+  const requestImage = () => {
+    return new Promise((res, rej) => {
+      fetch(BASE_URL + 'ip/mosiac', requestOptions)
+        .then((response) => response.json())
+        .then((result) => {
+          return result
+        })
+        .then((result) => {
+          downloadImage(result.fileName, 'element')
+            .then((req) => {
+              res(req)
+            })
+            .catch((err) => {
+              rej(err)
+            })
+        })
+        .catch((err) => {
+          rej(err)
+        })
+    })
+  }
+  requestImage().then((req) => {
+    dispatch({ type: IMAGE_PROCESSING_MOSAIC, id, new_url: req })
+  })
+}
+
+export const addDeletion = (
+  image,
+  startX,
+  startY,
+  endX,
+  endY,
+  backX,
+  backY
+) => async (dispatch, getState) => {
+  const formdata = new FormData()
+  formdata.append('img', image.img)
+  formdata.append('startX', startX)
+  formdata.append('startY', startY)
+  formdata.append('endX', endX)
+  formdata.append('endY', endY)
+  formdata.append('endY', backX)
+  formdata.append('endY', backY)
+
+  const requestOptions = {
+    method: 'POST',
+    body: formdata,
+  }
+
+  const requestImage = () => {
+    return new Promise((res, rej) => {
+      fetch(BASE_URL + 'ip/deletion', requestOptions)
+        .then((response) => response.json())
+        .then((result) => {
+          return result
+        })
+        .then((result) => {
+          downloadImage(result.fileName, 'element')
+            .then((req) => {
+              res(req)
+            })
+            .catch((err) => {
+              rej(err)
+            })
+        })
+        .catch((err) => {
+          rej(err)
+        })
+    })
+  }
+  requestImage().then((req) => {
+    dispatch({ type: IMAGE_PROCESSING_DELETEION, id, new_url: req })
+  })
+}
+
+export const addContrast = (image) => async (dispatch, getState) => {
+  const formdata = new FormData()
+  formdata.append('img', image.img)
+
+  const requestOptions = {
+    method: 'POST',
+    body: formdata,
+  }
+
+  const requestImage = () => {
+    return new Promise((res, rej) => {
+      fetch(BASE_URL + 'ip/cut', requestOptions)
+        .then((response) => response.json())
+        .then((result) => {
+          return result
+        })
+        .then((result) => {
+          downloadImage(result.fileName, 'element')
+            .then((req) => {
+              res(req)
+            })
+            .catch((err) => {
+              rej(err)
+            })
+        })
+        .catch((err) => {
+          rej(err)
+        })
+    })
+  }
+  requestImage().then((req) => {
+    dispatch({ type: IMAGE_PROCESSING_CONTRAST, id, new_url: req })
+  })
+}
+
 export const downloadImage = (fileName, type) => {
   return new Promise((res, rej) => {
+    let imgArray = []
     type == 'element'
       ? fetch(BASE_URL + `file/download/${fileName}`).then((result) => {
           toDataUrl(result.url, function (myBase64) {
             res(myBase64)
           })
         })
-      : fileName.forEach((item) => {
-          console.log(item)
-          fetch(BASE_URL + `file/download/${item}`).then((result) => {
+      : fileName.forEach(async (item) => {
+          await fetch(BASE_URL + `file/download/${item}`).then((result) => {
             toDataUrl(result.url, function (myBase64) {
-              res(myBase64)
+              imgArray.push(myBase64)
             })
           })
         })
+    //임시방편
+    setTimeout(() => {
+      res(imgArray)
+    }, 5000)
   })
 }
 
