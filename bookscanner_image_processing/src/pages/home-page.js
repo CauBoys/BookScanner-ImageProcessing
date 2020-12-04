@@ -47,6 +47,7 @@ export default function Home() {
       contrast: {
         value: 0,
       },
+      imgPart: [],
     },
   ])
   const [cutImage, setCutImage] = useState()
@@ -137,6 +138,26 @@ export default function Home() {
     })
   }
 
+  const imgPartList = (imageStore) => {
+    return imageStore.map((item, id) => {
+      return item.imgPart.map((img, imgId) => {
+        return (
+          <Card className="Card" id={imgId}>
+            <Card.Img className="Card-Image" variant="top" src={img} />
+            <Card.Body className="Card-Body">
+              <NextButtons
+                className="Next-Button"
+                path="/detail"
+                name="Go"
+                id={imgId}
+              />
+            </Card.Body>
+          </Card>
+        )
+      })
+    })
+  }
+
   return (
     <div className="Container">
       <div className="Header">
@@ -206,6 +227,7 @@ export default function Home() {
         </div>
         <h2 className="SubTitle">Click Image to link page</h2>
       </div>
+      <div className="Body-Container">{imgPartList(imageStore)}</div>
     </div>
   )
 }

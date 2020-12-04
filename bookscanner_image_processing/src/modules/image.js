@@ -18,6 +18,7 @@ export const findImage = (images) => async (dispatch, getState) => {
   images.forEach((image, id) => {
     var formdata = new FormData()
     formdata.append('img', image.img)
+    console.log(image)
     var requestOptions = {
       method: 'POST',
       body: formdata,
@@ -89,20 +90,24 @@ export const addWaterMark = (images) => async (dispatch, getState) => {
 
 export const downloadImage = (fileName, type) => {
   return new Promise((res, rej) => {
+    let imgArray = []
     type == 'element'
       ? fetch(BASE_URL + `file/download/${fileName}`).then((result) => {
           toDataUrl(result.url, function (myBase64) {
             res(myBase64)
           })
         })
-      : fileName.forEach((item) => {
-          console.log(item)
-          fetch(BASE_URL + `file/download/${item}`).then((result) => {
+      : fileName.forEach(async (item) => {
+          await fetch(BASE_URL + `file/download/${item}`).then((result) => {
             toDataUrl(result.url, function (myBase64) {
-              res(myBase64)
+              imgArray.push(myBase64)
             })
           })
         })
+    //임시방편
+    setTimeout(() => {
+      res(imgArray)
+    }, 5000)
   })
 }
 
