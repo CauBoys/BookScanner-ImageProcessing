@@ -1,6 +1,3 @@
-import { useHistory } from 'react-router-dom'
-import { Button } from 'react-bootstrap'
-
 export const NextButtons = ({ path, name, id, width, height }) => {
   const history = useHistory()
   return (
