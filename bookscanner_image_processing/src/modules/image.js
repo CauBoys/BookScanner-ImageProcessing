@@ -20,6 +20,7 @@ export const downloadImage = (fileName, type) => {
     let imgArray = []
     type == 'element'
       ? fetch(BASE_URL + `file/download/${fileName}`).then((result) => {
+          console.log(result.url)
           toDataUrl(result.url, function (myBase64) {
             res(myBase64)
           })
@@ -127,6 +128,18 @@ export const addBlur = (image, id, startX, startY, endX, endY, value) => async (
   }
 
   const requestImage = () => {
+    const formdata = new FormData()
+    formdata.append('img', image[0].img)
+    formdata.append('startX', startX)
+    formdata.append('startY', startY)
+    formdata.append('endX', endX)
+    formdata.append('endY', endY)
+    formdata.append('value', value)
+    const requestOptions = {
+      method: 'POST',
+      body: formdata,
+    }
+
     return new Promise((res, rej) => {
       fetch(BASE_URL + 'ip/blur', requestOptions)
         .then((response) => response.json())
@@ -148,7 +161,7 @@ export const addBlur = (image, id, startX, startY, endX, endY, value) => async (
     })
   }
   requestImage().then((req) => {
-    dispatch({ type: IMAGE_PROCESSING_BLUR, id, new_url: req })
+    dispatch({ type: IMAGE_PROCESSING_BLUR, id, url: req })
   })
 }
 
@@ -423,10 +436,21 @@ export default function image(state = initialState, action) {
         // bufferImage: state.bufferImage.filter((v) => v.id !== action.id),
       }
     case IMAGE_PROCESSING_MOSAIC:
+      console.log(action.url)
       return {
         ...state,
+        // url: action.url,
         imageFile: state.imageFile.map((item) =>
-          item.id === action.id + 1 ? { ...item, url: action.url } : item
+          item.id === action.id + 1 ? item : { ...item, url: action.url }
+        ),
+      }
+    case IMAGE_PROCESSING_BLUR:
+      console.log(action.url)
+      return {
+        ...state,
+        // url: action.url,
+        imageFile: state.imageFile.map((item) =>
+          item.id === action.id + 1 ? item : { ...item, url: action.url }
         ),
       }
     case IMAGE_PROCESSING_RESTORE:
