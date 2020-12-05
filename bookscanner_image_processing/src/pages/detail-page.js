@@ -26,18 +26,60 @@ export default function Detail() {
   const [blur, setBlur] = useState(50)
   const dispatch = useDispatch()
 
+  console.log(document.getElementsByClassName('canvas').offsetWidth)
   const startLocation = (event) => {
-    console.log(event)
+    let x = 0
+    let y = 0
+    if (event.pageX || event.pageY) {
+      x = event.pageX
+      y = event.pageY
+    } else {
+      x =
+        event.clientX +
+        document.body.scrollLeft +
+        document.documentElement.scrollLeft
+      y =
+        event.clientY +
+        document.body.scrollTop +
+        document.documentElement.scrollTop
+    }
+    x -= event.target.offsetLeft
+    y -= event.target.offsetTop
+    y -= 77
+    console.log(x)
+    console.log(y)
+    setLocationStartX(x)
+    setLocationStartY(y)
   }
 
   const endLocation = (event) => {
-    setLocationEndX(event.offsetX)
-    setLocationEndY(event.offsetY)
+    let x = 0
+    let y = 0
+    if (event.pageX || event.pageY) {
+      x = event.pageX
+      y = event.pageY
+    } else {
+      x =
+        event.clientX +
+        document.body.scrollLeft +
+        document.documentElement.scrollLeft
+      y =
+        event.clientY +
+        document.body.scrollTop +
+        document.documentElement.scrollTop
+    }
+    x -= event.target.offsetLeft
+    y -= event.target.offsetTop
+    y -= 77
+    console.log(x)
+    console.log(y)
+    setLocationEndX(x)
+    setLocationEndY(y)
   }
 
   const imgBlur = useCallback(
-    (image, startX, startY, endX, endY, value) =>
-      dispatch(addBlur((image, startX, startY, endX, endY, value))),
+    (image, id, startX, startY, endX, endY, value) =>
+      dispatch(addBlur((image, id, startX, startY, endX, endY, value))),
     [dispatch]
   )
   const imgMosiac = useCallback(
@@ -54,11 +96,32 @@ export default function Detail() {
     dispatch,
   ])
 
-  const clickImgProcess = (type, ...data) => {
-    if (type === 'blur') {
-    } else if (type === 'mosaic') {
-    } else if (type === 'deletion') {
-    } else if (type === 'contrast') {
+  const clickImgProcess = () => {
+    if (checkMode === 6) {
+      imgMosiac(
+        imageDate,
+        id,
+        locationStartX,
+        locationStartY,
+        locationEndX,
+        locationEndY,
+        mosaic
+      )
+    } else if (checkMode === 2) {
+      imgBlur(
+        imageDate,
+        id,
+        locationStartX,
+        locationStartY,
+        locationEndX,
+        locationEndY,
+        blur
+      )
+      //블라
+    } else if (checkMode === 1) {
+      //딜리션
+    } else if (checkMode === 1) {
+      //const
     }
   }
 
@@ -73,9 +136,7 @@ export default function Detail() {
         <Button
           variant="primary"
           className="DownloadButton"
-          onClick={() => {
-            imgMosiac(imageDate, id, 100, 100, 500, 500, 10)
-          }}
+          onClick={() => clickImgProcess()}
         >
           Save
         </Button>
@@ -84,8 +145,8 @@ export default function Detail() {
         {/* <div className="showImg"></div> */}
         <canvas
           id="jsCanvas"
-          onMouseDown={() => startLocation(this)}
-          onMouseUp={() => endLocation(this)}
+          onMouseDown={(e) => startLocation(e)}
+          onMouseUp={(e) => endLocation(e)}
           className="canvas"
           style={{
             backgroundImage: `url(${imageDate[0].url})`,

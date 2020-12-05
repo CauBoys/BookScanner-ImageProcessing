@@ -27,6 +27,9 @@ import {
 import '../style/home.css'
 
 export default function Home() {
+  let imgX = 0
+  let imgY = 0
+
   const [imageList, setImageList] = useState()
   const [image, setImage] = useState([
     {
@@ -108,11 +111,57 @@ export default function Home() {
         value: 0,
       }
     }
+    const formdata = new FormData()
+
+    formdata.append('img', file)
+    const requestOptions = {
+      method: 'POST',
+      body: formdata,
+    }
+
+    new Promise((res, rej) => {
+      fetch(BASE_URL + 'ip/uploadInfor', requestOptions)
+        .then((response) => response.json())
+        .then((result) => {
+          return result
+        })
+        .then((result) => {
+          console.log(result)
+        })
+        .catch((err) => {
+          rej(err)
+        })
+    })
     reader.readAsDataURL(file)
   }
 
   const cardList = (imageStore) => {
+    // let imgX = 0
+    // let imgY = 0
+
     return imageStore.map((item, id) => {
+      // const formdata = new FormData()
+
+      // formdata.append('img', item)
+      // const requestOptions = {
+      //   method: 'POST',
+      //   body: formdata,
+      // }
+
+      // new Promise((res, rej) => {
+      //   fetch(BASE_URL + 'ip/uploadInfor', requestOptions)
+      //     .then((response) => response.json())
+      //     .then((result) => {
+      //       return result
+      //     })
+      //     .then((result) => {
+      //       imgX = result.width
+      //       imgY = result.height
+      //     })
+      //     .catch((err) => {
+      //       rej(err)
+      //     })
+      // })
       return (
         <Card className="Card" id={id}>
           <button
@@ -131,6 +180,8 @@ export default function Home() {
               path="/detail"
               name="Adjust Image"
               id={id}
+              // width={this.imgX}
+              // height={this.imgY}
             />
           </Card.Body>
         </Card>
