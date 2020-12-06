@@ -1,4 +1,4 @@
-import { BASE_URL, toDataUrl } from '../common/common'
+import { BASE_URL, toDataUrl, dataURLtoFile } from '../common/common'
 //Action Type
 const IMAGE_UPLOAD = 'image/IMAGE_UPLOAD'
 const IMAGE_DELETE = 'image/IMAGE_DELETE'
@@ -21,6 +21,7 @@ export const downloadImage = (fileName, type) => {
     type == 'element'
       ? fetch(BASE_URL + `file/download/${fileName}`).then((result) => {
           console.log(result.url)
+
           toDataUrl(result.url, function (myBase64) {
             res(myBase64)
           })
@@ -437,6 +438,8 @@ export default function image(state = initialState, action) {
       }
     case IMAGE_PROCESSING_MOSAIC:
       console.log(action.url)
+      var file = dataURLtoFile(action.url)
+      console.log(file)
       return {
         ...state,
         // url: action.url,
