@@ -1,5 +1,5 @@
 let spoid = false
-export const drawEraseSection = (erase) => {
+export const drawEraseSection = (width, height) => {
   const canvas = document.getElementById('jsCanvas')
   const ctx = canvas.getContext('2d')
   const saveBtn = document.getElementById('jsSave')
@@ -9,8 +9,8 @@ export const drawEraseSection = (erase) => {
   const INITIAL_COLOR = 'rgba(255,255,255,0.5)'
   const CANVAS_SIZE = 600
 
-  canvas.width = CANVAS_SIZE
-  canvas.height = CANVAS_SIZE
+  canvas.width = width / 2
+  canvas.height = height / 2
   ctx.lineWidth = 2.5
 
   let painting = false
@@ -24,6 +24,8 @@ export const drawEraseSection = (erase) => {
     initialX = event.offsetX
     initialY = event.offsetY
     painting = true
+    // console.log('initialX', initialX)
+    // console.log('initialY', initialY)
   }
 
   function endPainting(event) {
@@ -39,6 +41,10 @@ export const drawEraseSection = (erase) => {
       ctx.beginPath()
       ctx.moveTo(x, y)
     } else {
+      console.log('initialX', initialX, '에서')
+      console.log('initialY', initialY)
+      console.log('x', x)
+      console.log('y', y)
       ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE)
       ctx.fillRect(initialX, initialY, x - initialX, y - initialY)
     }

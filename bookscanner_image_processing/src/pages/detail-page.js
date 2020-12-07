@@ -41,7 +41,6 @@ export default function Detail() {
     }
     x -= event.target.offsetLeft
     y -= event.target.offsetTop
-    y -= 77
     console.log(x)
     console.log(y)
     setLocationStartX(x)
@@ -66,7 +65,7 @@ export default function Detail() {
     }
     x -= event.target.offsetLeft
     y -= event.target.offsetTop
-    y -= 77
+
     console.log(x)
     console.log(y)
     setLocationEndX(x)
@@ -154,6 +153,8 @@ export default function Detail() {
           className="canvas"
           style={{
             backgroundImage: `url(${imageDate[0].new_url})`,
+            width: `${width / 2}px`,
+            height: `${height / 2}px`,
             backgroundRepeat: 'no-repeat',
             backgroundSize: 'contain',
             backgroundPosition: 'center center',
@@ -189,7 +190,7 @@ export default function Detail() {
               <img
                 onClick={() => {
                   setCheckErase(!checkErase)
-                  drawEraseSection()
+                  drawEraseSection(width, height)
                 }}
                 src="../border_color.png"
                 className="adjust_content erase"
