@@ -23,33 +23,36 @@ export default function Detail() {
   const [backX, setBackX] = useState(0)
   const [backY, setBackY] = useState(0)
   const dispatch = useDispatch()
+  let changeColor = true
   const [width, height] = [imageStore[0].size.width, imageStore[0].size.height]
 
   const startLocation = (event) => {
-    let x = 0
-    let y = 0
-    if (event.pageX || event.pageY) {
-      x = event.pageX
-      y = event.pageY
-    } else {
-      x =
-        event.clientX +
-        document.body.scrollLeft +
-        document.documentElement.scrollLeft
-      y =
-        event.clientY +
-        document.body.scrollTop +
-        document.documentElement.scrollTop
+    if (changeColor) {
+      let x = 0
+      let y = 0
+      if (event.pageX || event.pageY) {
+        x = event.pageX
+        y = event.pageY
+      } else {
+        x =
+          event.clientX +
+          document.body.scrollLeft +
+          document.documentElement.scrollLeft
+        y =
+          event.clientY +
+          document.body.scrollTop +
+          document.documentElement.scrollTop
+      }
+      x -= event.target.offsetLeft
+      y -= event.target.offsetTop
+      setLocationStartX(x * 2)
+      setLocationStartY(y * 2)
     }
-    x -= event.target.offsetLeft
-    y -= event.target.offsetTop
-    console.log(x)
-    console.log(y)
-    setLocationStartX(x * 2)
-    setLocationStartY(y * 2)
   }
 
   const endPainting = (event) => {
+    changeColor = false
+    setCheckMode(1)
     let x = 0
     let y = 0
     if (event.pageX || event.pageY) {
@@ -72,33 +75,32 @@ export default function Detail() {
     setBackY(y * 2)
   }
   const endLocation = (event) => {
-    let x = 0
-    let y = 0
-    if (event.pageX || event.pageY) {
-      x = event.pageX
-      y = event.pageY
-    } else {
-      x =
-        event.clientX +
-        document.body.scrollLeft +
-        document.documentElement.scrollLeft
-      y =
-        event.clientY +
-        document.body.scrollTop +
-        document.documentElement.scrollTop
+    if (changeColor) {
+      let x = 0
+      let y = 0
+      if (event.pageX || event.pageY) {
+        x = event.pageX
+        y = event.pageY
+      } else {
+        x =
+          event.clientX +
+          document.body.scrollLeft +
+          document.documentElement.scrollLeft
+        y =
+          event.clientY +
+          document.body.scrollTop +
+          document.documentElement.scrollTop
+      }
+      x -= event.target.offsetLeft
+      y -= event.target.offsetTop
+      setLocationEndX(x * 2)
+      setLocationEndY(y * 2)
     }
-    x -= event.target.offsetLeft
-    y -= event.target.offsetTop
-
-    console.log(x)
-    console.log(y)
-    setLocationEndX(x * 2)
-    setLocationEndY(y * 2)
   }
 
   const imgBlur = useCallback(
     (image, id, startX, startY, endX, endY, value) =>
-      dispatch(addBlur((image, id, startX, startY, endX, endY, value))),
+      dispatch(addBlur(image, id, startX, startY, endX, endY, value)),
     [dispatch]
   )
   const imgMosiac = useCallback(
@@ -117,6 +119,10 @@ export default function Detail() {
     (image, id, constrast) => dispatch(addContrast(image, id, constrast)),
     [dispatch]
   )
+  // const imgContrast = useCallback((image) => dispatch(addContrast(image)), [
+  //   dispatch,
+  // ])
+  console.log(checkMode)
 
   const clickImgProcess = () => {
     if (checkMode === 6) {
@@ -142,6 +148,7 @@ export default function Detail() {
       //블라
     } else if (checkMode === 1) {
       //딜리션
+      console.log('checkMode', checkMode)
       imgDeletion(
         imageDate,
         id,
@@ -152,17 +159,16 @@ export default function Detail() {
         backX,
         backY
       )
-    } else if (checkMode === 1) {
+    } else if (checkMode === 4) {
       //const
       imgContrast(imageDate, id, constrast)
     }
   }
-  console.log(imageStore)
 
   const handleSaveClick = () => {
     const link = document.createElement('a')
-    link.href = imageStore[0].new_url
-    link.download = `${imageStore[0].img.name}`
+    link.href = imageStore[id - 1].new_url
+    link.download = `${imageStore[id - 1].img.name}`
     link.click()
   }
 
@@ -278,7 +284,7 @@ export default function Detail() {
                 ) : (
                   <div></div>
                 )}
-                <p className="adjust_title" onClick={() => setCheckMode(1)}>
+                <p className="adjust_title" onClick={(e) => endPainting(e)}>
                   delete
                 </p>
                 {checkMode === 1 ? (

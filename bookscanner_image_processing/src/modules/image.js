@@ -21,8 +21,6 @@ export const downloadImage = (fileName, type) => {
     let imgArray = []
     type == 'element'
       ? fetch(BASE_URL + `file/download/${fileName}`).then((result) => {
-          console.log(result.url)
-
           toDataUrl(result.url, function (myBase64) {
             res(myBase64)
           })
@@ -138,18 +136,6 @@ export const addBlur = (image, id, startX, startY, endX, endY, value) => async (
   }
 
   const requestImage = () => {
-    const formdata = new FormData()
-    formdata.append('img', image[0].img)
-    formdata.append('startX', startX)
-    formdata.append('startY', startY)
-    formdata.append('endX', endX)
-    formdata.append('endY', endY)
-    formdata.append('value', value)
-    const requestOptions = {
-      method: 'POST',
-      body: formdata,
-    }
-
     return new Promise((res, rej) => {
       fetch(BASE_URL + 'ip/blur', requestOptions)
         .then((response) => response.json())
@@ -171,7 +157,8 @@ export const addBlur = (image, id, startX, startY, endX, endY, value) => async (
     })
   }
   requestImage().then((req) => {
-    dispatch({ type: IMAGE_PROCESSING_BLUR, id, url: req })
+    let newFile = dataURLtoFile(req, 'addBlur')
+    dispatch({ type: IMAGE_PROCESSING_BLUR, file: newFile, id, url: req })
   })
 }
 
@@ -233,14 +220,15 @@ export const addDeletion = (
   backX,
   backY
 ) => async (dispatch, getState) => {
+  console.log(image, id, startX, startY, endX, endY, backX, backY)
   const formdata = new FormData()
   formdata.append('img', image[0].img)
   formdata.append('startX', startX)
   formdata.append('startY', startY)
   formdata.append('endX', endX)
   formdata.append('endY', endY)
-  formdata.append('endY', backX)
-  formdata.append('endY', backY)
+  formdata.append('backX', backX)
+  formdata.append('backY', backY)
 
   const requestOptions = {
     method: 'POST',
@@ -269,11 +257,13 @@ export const addDeletion = (
     })
   }
   requestImage().then((req) => {
-    dispatch({ type: IMAGE_PROCESSING_DELETEION, id, new_url: req })
+    let newFile = dataURLtoFile(req, 'addDeletion')
+    dispatch({ type: IMAGE_PROCESSING_DELETEION, file: newFile, id, url: req })
   })
 }
 
 export const addContrast = (image, id, value) => async (dispatch, getState) => {
+  console.log(image, id, value)
   const formdata = new FormData()
   formdata.append('img', image[0].img)
   formdata.append('value', value)
@@ -285,7 +275,7 @@ export const addContrast = (image, id, value) => async (dispatch, getState) => {
 
   const requestImage = () => {
     return new Promise((res, rej) => {
-      fetch(BASE_URL + 'ip/cut', requestOptions)
+      fetch(BASE_URL + 'ip/contrast', requestOptions)
         .then((response) => response.json())
         .then((result) => {
           return result
@@ -305,7 +295,8 @@ export const addContrast = (image, id, value) => async (dispatch, getState) => {
     })
   }
   requestImage().then((req) => {
-    dispatch({ type: IMAGE_PROCESSING_CONTRAST, id, new_url: req })
+    let newFile = dataURLtoFile(req, 'addContrast')
+    dispatch({ type: IMAGE_PROCESSING_CONTRAST, file: newFile, id, url: req })
   })
 }
 
@@ -424,7 +415,6 @@ export default function image(state = initialState, action) {
         imageFile: state.imageFile.concat(action.image),
       }
     case ADD_WATERMARK:
-      console.log(action.id)
       return {
         ...state,
         imageFile: state.imageFile.map((item) =>
@@ -456,14 +446,15 @@ export default function image(state = initialState, action) {
     case IMAGE_DELETE:
       return {
         ...state,
-        imageFile: state.imageFile.filter((v) => v.id !== action.id),
-        // bufferImage: state.bufferImage.filter((v) => v.id !== action.id),
+        imageFile: state.imageFile.map((item) =>
+          item.id === action.id
+            ? { ...item, img: action.file, new_url: action.url }
+            : item
+        ),
       }
     case IMAGE_PROCESSING_MOSAIC:
       return {
         ...state,
-        // url: action.url,
-
         imageFile: state.imageFile.map((item) =>
           item.id === action.id
             ? { ...item, img: action.file, new_url: action.url }
@@ -471,12 +462,30 @@ export default function image(state = initialState, action) {
         ),
       }
     case IMAGE_PROCESSING_BLUR:
-      console.log(action.url)
       return {
         ...state,
-        // url: action.url,
         imageFile: state.imageFile.map((item) =>
-          item.id === action.id + 1 ? item : { ...item, url: action.url }
+          item.id === action.id
+            ? { ...item, img: action.file, new_url: action.url }
+            : item
+        ),
+      }
+    case IMAGE_PROCESSING_CONTRAST:
+      return {
+        ...state,
+        imageFile: state.imageFile.map((item) =>
+          item.id === action.id
+            ? { ...item, img: action.file, new_url: action.url }
+            : item
+        ),
+      }
+    case IMAGE_PROCESSING_DELETEION:
+      return {
+        ...state,
+        imageFile: state.imageFile.map((item) =>
+          item.id === action.id
+            ? { ...item, img: action.file, new_url: action.url }
+            : item
         ),
       }
     case IMAGE_PROCESSING_RESTORE:
