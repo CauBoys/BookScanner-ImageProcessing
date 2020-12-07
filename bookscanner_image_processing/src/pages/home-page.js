@@ -48,6 +48,7 @@ export default function Home() {
         value: 0,
       },
       imgPart: [],
+      size: {},
     },
   ])
   const [cutImage, setCutImage] = useState()
@@ -206,8 +207,6 @@ export default function Home() {
                 path="/detail"
                 name="Go"
                 id={item.id - 1}
-                witdh={imgX}
-                height={imgX}
               />
             </Card.Body>
           </Card>

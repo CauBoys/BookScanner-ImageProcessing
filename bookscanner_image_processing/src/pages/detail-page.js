@@ -25,11 +25,9 @@ export default function Detail() {
   const [mosaic, setMosaic] = useState(50)
   const [blur, setBlur] = useState(50)
   const dispatch = useDispatch()
-  // console.log(imageStore)
+  const [width, height] = [imageStore[0].size.width, imageStore[0].size.height]
+  console.log(width, height)
 
-  // const [width, height] = [imageStore[0].size.width, imageStore[0].size.height]
-  // console.log(width, height)
-  console.log(document.getElementsByClassName('canvas').offsetWidth)
   const startLocation = (event) => {
     let x = 0
     let y = 0
