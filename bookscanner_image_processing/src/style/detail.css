@@ -26,10 +26,13 @@
   color: white;
   display: flex;
   flex: 1 1;
+  width: 100vw;
+  justify-content: space-between;
 }
 .content {
   margin-top: 150px;
   display: flex;
+  justify-content: space-around;
 }
 .showImg,
 #jsCanvas {
