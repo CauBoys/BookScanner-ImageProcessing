@@ -1,4 +1,5 @@
-export const BASE_URL = 'http://code-giraffe.iptime.org:35050/'
+// export const BASE_URL = 'http://code-giraffe.iptime.org:35050/'
+export const BASE_URL = 'http://192.168.35.163:35050/'
 
 export const DEEP_CLONE = (obj) => {
   if (obj === null || typeof obj !== 'object') {

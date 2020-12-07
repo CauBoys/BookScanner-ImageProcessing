@@ -86,7 +86,7 @@ export default function Home() {
     }
   }, [nextId.current])
 
-  const NextButtons = ({ path, name, id }) => {
+  const NextButtons = ({ path, name, id, witdh, height }) => {
     const history = useHistory()
     return (
       <div>
@@ -94,7 +94,7 @@ export default function Home() {
           variant="primary"
           onClick={() => {
             imgWaterMark(imageStore).then(() => {
-              history.push(`${path}/${id}`)
+              history.push(`${path}/${id}/${witdh}/${height}`)
             })
           }}
         >
@@ -124,12 +124,15 @@ export default function Home() {
       newArr[0].img = file
       newArr[0].id = nextId.current
       newArr[0].url = reader.result
+
       setImage(newArr)
       let newValue = {
         id: nextId.current,
         value: 0,
       }
     }
+    reader.readAsDataURL(file)
+
     const formdata = new FormData()
 
     formdata.append('img', file)
@@ -138,49 +141,50 @@ export default function Home() {
       body: formdata,
     }
 
-    new Promise((res, rej) => {
+    return new Promise((res, rej) => {
       fetch(BASE_URL + 'ip/uploadInfor', requestOptions)
         .then((response) => response.json())
         .then((result) => {
-          return result
-        })
-        .then((result) => {
           console.log(result)
+          res(result)
+          return result
         })
         .catch((err) => {
           rej(err)
         })
+    }).then((result) => {
+      imgX = result.witdh
+      imgY = result.height
     })
-    reader.readAsDataURL(file)
   }
 
   const cardList = (imageStore) => {
-    // let imgX = 0
-    // let imgY = 0
-
     return imageStore.map((item, id) => {
-      // const formdata = new FormData()
+      const formdata = new FormData()
 
-      // formdata.append('img', item)
-      // const requestOptions = {
-      //   method: 'POST',
-      //   body: formdata,
-      // }
+      formdata.append('img', item)
+      const requestOptions = {
+        method: 'POST',
+        body: item,
+      }
 
+      console.log(requestOptions)
       // new Promise((res, rej) => {
       //   fetch(BASE_URL + 'ip/uploadInfor', requestOptions)
       //     .then((response) => response.json())
       //     .then((result) => {
+      //       console.log(result)
       //       return result
       //     })
       //     .then((result) => {
-      //       imgX = result.width
-      //       imgY = result.height
+      //       console.log(result)
+      //       console.log(newY)
       //     })
       //     .catch((err) => {
       //       rej(err)
       //     })
       // })
+
       return (
         <Card className="Card" id={id}>
           <button
@@ -199,8 +203,8 @@ export default function Home() {
               path="/detail"
               name="Adjust Image"
               id={id}
-              // width={this.imgX}
-              // height={this.imgY}
+              width={imgX}
+              height={imgY}
             />
           </Card.Body>
         </Card>
@@ -220,6 +224,8 @@ export default function Home() {
                 path="/detail"
                 name="Go"
                 id={item.id - 1}
+                witdh={imgX}
+                height={imgX}
               />
             </Card.Body>
           </Card>
