@@ -114,7 +114,8 @@ export const addWaterMark = (images) => async (dispatch, getState) => {
       })
     }
     requestImage().then((req) => {
-      dispatch({ type: ADD_WATERMARK, id, new_url: req })
+      let newFile = dataURLtoFile(req, 'addwatermark')
+      dispatch({ type: ADD_WATERMARK, file: newFile, id, new_url: req })
     })
   })
 }
@@ -194,6 +195,7 @@ export const addMosiac = (
     method: 'POST',
     body: formdata,
   }
+
   const requestImage = () => {
     return new Promise((res, rej) => {
       fetch(BASE_URL + 'ip/mosiac', requestOptions)
@@ -216,7 +218,8 @@ export const addMosiac = (
     })
   }
   requestImage().then((req) => {
-    dispatch({ type: IMAGE_PROCESSING_MOSAIC, id, url: req })
+    let newFile = dataURLtoFile(req, 'addMosiac')
+    dispatch({ type: IMAGE_PROCESSING_MOSAIC, file: newFile, id, url: req })
   })
 }
 
@@ -421,11 +424,12 @@ export default function image(state = initialState, action) {
         imageFile: state.imageFile.concat(action.image),
       }
     case ADD_WATERMARK:
+      console.log(action.id)
       return {
         ...state,
         imageFile: state.imageFile.map((item) =>
           item.id === action.id + 1
-            ? { ...item, new_url: action.new_url }
+            ? { ...item, img: action.file, new_url: action.new_url }
             : item
         ),
       }
@@ -443,7 +447,6 @@ export default function image(state = initialState, action) {
         width: action.width,
         height: action.height,
       }
-      console.log(action)
       return {
         ...state,
         imageFile: state.imageFile.map((item) =>
@@ -457,14 +460,22 @@ export default function image(state = initialState, action) {
         // bufferImage: state.bufferImage.filter((v) => v.id !== action.id),
       }
     case IMAGE_PROCESSING_MOSAIC:
+<<<<<<< HEAD
+      console.log(action.file)
+      // console.log(action.url)
+=======
       console.log(action.url)
       var file = dataURLtoFile(action.url)
       console.log(file)
+>>>>>>> 27ff4442240f2dac31079a1b89d433bb6900b081
       return {
         ...state,
         // url: action.url,
+
         imageFile: state.imageFile.map((item) =>
-          item.id === action.id + 1 ? item : { ...item, url: action.url }
+          item.id === action.id
+            ? { ...item, img: action.file, new_url: action.url }
+            : item
         ),
       }
     case IMAGE_PROCESSING_BLUR:

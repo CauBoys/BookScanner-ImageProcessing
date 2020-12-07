@@ -30,7 +30,7 @@ export default function Home() {
   const [imageList, setImageList] = useState()
   const [image, setImage] = useState([
     {
-      img: '',
+      img: [],
       id: 0,
       type_process: 'O',
       type_id: 0,

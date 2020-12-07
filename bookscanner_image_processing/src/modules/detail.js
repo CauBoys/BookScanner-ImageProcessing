@@ -70,12 +70,6 @@ export const drawEraseSection = (width, height) => {
   }
 }
 
-export const handleSaveClick = () => {
-  const canvas = document.getElementById('jsCanvas')
-  const image = canvas.toDataURL()
-  const link = document.createElement('a')
-}
-
 export const endPainting = (event) => {
   spoid = true
 }
