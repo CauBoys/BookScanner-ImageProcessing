@@ -2,11 +2,7 @@ import React, { useState, useRef, useCallback, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Button } from 'react-bootstrap'
 import '../style/detail.css'
-import {
-  drawEraseSection,
-  handleSaveClick,
-  endPainting,
-} from '../modules/detail'
+import { drawEraseSection, endPainting } from '../modules/detail'
 import { useHistory } from 'react-router-dom'
 import { addBlur, addMosiac, addDeletion, addContrast } from '../modules/image'
 
@@ -26,7 +22,6 @@ export default function Detail() {
   const [blur, setBlur] = useState(50)
   const dispatch = useDispatch()
   const [width, height] = [imageStore[0].size.width, imageStore[0].size.height]
-  console.log(width, height)
 
   const startLocation = (event) => {
     let x = 0
@@ -124,6 +119,14 @@ export default function Detail() {
     } else if (checkMode === 1) {
       //const
     }
+  }
+  console.log(imageStore)
+
+  const handleSaveClick = () => {
+    const link = document.createElement('a')
+    link.href = imageStore[0].new_url
+    link.download = `${imageStore[0].img.name}`
+    link.click()
   }
 
   return (
