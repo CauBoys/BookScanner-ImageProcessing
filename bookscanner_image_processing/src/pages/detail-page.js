@@ -48,8 +48,8 @@ export default function Detail() {
     y -= event.target.offsetTop
     console.log(x)
     console.log(y)
-    setLocationStartX(x)
-    setLocationStartY(y)
+    setLocationStartX(x * 2)
+    setLocationStartY(y * 2)
   }
 
   const endLocation = (event) => {
@@ -73,8 +73,8 @@ export default function Detail() {
 
     console.log(x)
     console.log(y)
-    setLocationEndX(x)
-    setLocationEndY(y)
+    setLocationEndX(x * 2)
+    setLocationEndY(y * 2)
   }
 
   const imgBlur = useCallback(
