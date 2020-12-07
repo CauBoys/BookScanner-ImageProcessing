@@ -41,8 +41,6 @@ export default function Detail() {
     }
     x -= event.target.offsetLeft
     y -= event.target.offsetTop
-    console.log(x)
-    console.log(y)
     setLocationStartX(x * 2)
     setLocationStartY(y * 2)
   }
@@ -65,16 +63,13 @@ export default function Detail() {
     }
     x -= event.target.offsetLeft
     y -= event.target.offsetTop
-
-    console.log(x)
-    console.log(y)
     setLocationEndX(x * 2)
     setLocationEndY(y * 2)
   }
 
   const imgBlur = useCallback(
     (image, id, startX, startY, endX, endY, value) =>
-      dispatch(addBlur((image, id, startX, startY, endX, endY, value))),
+      dispatch(addBlur(image, id, startX, startY, endX, endY, value)),
     [dispatch]
   )
   const imgMosiac = useCallback(
@@ -90,7 +85,7 @@ export default function Detail() {
   const imgContrast = useCallback((image) => dispatch(addContrast(image)), [
     dispatch,
   ])
-
+  console.log(checkMode)
   const clickImgProcess = () => {
     if (checkMode === 6) {
       imgMosiac(
@@ -119,12 +114,11 @@ export default function Detail() {
       //const
     }
   }
-  console.log(imageStore)
 
   const handleSaveClick = () => {
     const link = document.createElement('a')
-    link.href = imageStore[0].new_url
-    link.download = `${imageStore[0].img.name}`
+    link.href = imageStore[id - 1].new_url
+    link.download = `${imageStore[id - 1].img.name}`
     link.click()
   }
 

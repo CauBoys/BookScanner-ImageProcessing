@@ -123,7 +123,6 @@ export const addBlur = (image, id, startX, startY, endX, endY, value) => async (
   dispatch,
   getState
 ) => {
-  console.log(image, id, startX, startY, endX, endY, value)
   const formdata = new FormData()
   formdata.append('img', image[0].img)
   formdata.append('startX', startX)
@@ -158,7 +157,6 @@ export const addBlur = (image, id, startX, startY, endX, endY, value) => async (
     })
   }
   requestImage().then((req) => {
-    console.log(11111)
     let newFile = dataURLtoFile(req, 'addBlur')
     dispatch({ type: IMAGE_PROCESSING_BLUR, file: newFile, id, url: req })
   })
@@ -258,7 +256,8 @@ export const addDeletion = (
     })
   }
   requestImage().then((req) => {
-    dispatch({ type: IMAGE_PROCESSING_DELETEION, id, new_url: req })
+    let newFile = dataURLtoFile(req, 'addDeletion')
+    dispatch({ type: IMAGE_PROCESSING_DELETEION, file: newFile, id, url: req })
   })
 }
 
@@ -274,7 +273,7 @@ export const addContrast = (image, id, value) => async (dispatch, getState) => {
 
   const requestImage = () => {
     return new Promise((res, rej) => {
-      fetch(BASE_URL + 'ip/cut', requestOptions)
+      fetch(BASE_URL + 'ip/contrast', requestOptions)
         .then((response) => response.json())
         .then((result) => {
           return result
@@ -294,7 +293,8 @@ export const addContrast = (image, id, value) => async (dispatch, getState) => {
     })
   }
   requestImage().then((req) => {
-    dispatch({ type: IMAGE_PROCESSING_CONTRAST, id, new_url: req })
+    let newFile = dataURLtoFile(req, 'addContrast')
+    dispatch({ type: IMAGE_PROCESSING_CONTRAST, file: newFile, id, url: req })
   })
 }
 
@@ -444,8 +444,11 @@ export default function image(state = initialState, action) {
     case IMAGE_DELETE:
       return {
         ...state,
-        imageFile: state.imageFile.filter((v) => v.id !== action.id),
-        // bufferImage: state.bufferImage.filter((v) => v.id !== action.id),
+        imageFile: state.imageFile.map((item) =>
+          item.id === action.id
+            ? { ...item, img: action.file, new_url: action.url }
+            : item
+        ),
       }
     case IMAGE_PROCESSING_MOSAIC:
       return {
@@ -457,6 +460,15 @@ export default function image(state = initialState, action) {
         ),
       }
     case IMAGE_PROCESSING_BLUR:
+      return {
+        ...state,
+        imageFile: state.imageFile.map((item) =>
+          item.id === action.id
+            ? { ...item, img: action.file, new_url: action.url }
+            : item
+        ),
+      }
+    case IMAGE_PROCESSING_CONTRAST:
       return {
         ...state,
         imageFile: state.imageFile.map((item) =>
