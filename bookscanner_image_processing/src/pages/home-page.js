@@ -86,7 +86,7 @@ export default function Home() {
     }
   }, [nextId.current])
 
-  const NextButtons = ({ path, name, id, witdh, height }) => {
+  const NextButtons = ({ path, name, id }) => {
     const history = useHistory()
     return (
       <div>
@@ -94,7 +94,7 @@ export default function Home() {
           variant="primary"
           onClick={() => {
             imgWaterMark(imageStore).then(() => {
-              history.push(`${path}/${id}/${witdh}/${height}`)
+              history.push(`${path}/${id}`)
             })
           }}
         >
@@ -132,29 +132,15 @@ export default function Home() {
       }
     }
     reader.readAsDataURL(file)
-
-    const formdata = new FormData()
-
-    formdata.append('img', file)
-    const requestOptions = {
+    console.log(file)
+    fetch(BASE_URL + 'ip/uploadInfor', {
       method: 'POST',
-      body: formdata,
-    }
-
-    return new Promise((res, rej) => {
-      fetch(BASE_URL + 'ip/uploadInfor', requestOptions)
-        .then((response) => response.json())
-        .then((result) => {
-          console.log(result)
-          res(result)
-          return result
-        })
-        .catch((err) => {
-          rej(err)
-        })
-    }).then((result) => {
-      imgX = result.witdh
-      imgY = result.height
+      body: {
+        img: file,
+      },
+    }).then((response) => {
+      console.log('1')
+      console.log(response)
     })
   }
 
@@ -203,8 +189,8 @@ export default function Home() {
               path="/detail"
               name="Adjust Image"
               id={id}
-              width={imgX}
-              height={imgY}
+              // width={imgX}
+              // height={imgY}
             />
           </Card.Body>
         </Card>
