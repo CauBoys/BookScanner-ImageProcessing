@@ -460,14 +460,6 @@ export default function image(state = initialState, action) {
         // bufferImage: state.bufferImage.filter((v) => v.id !== action.id),
       }
     case IMAGE_PROCESSING_MOSAIC:
-<<<<<<< HEAD
-      console.log(action.file)
-      // console.log(action.url)
-=======
-      console.log(action.url)
-      var file = dataURLtoFile(action.url)
-      console.log(file)
->>>>>>> 27ff4442240f2dac31079a1b89d433bb6900b081
       return {
         ...state,
         // url: action.url,
