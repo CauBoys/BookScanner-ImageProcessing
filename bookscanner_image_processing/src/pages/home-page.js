@@ -20,11 +20,7 @@ import {
   addWaterMark,
   findImage,
 } from '../modules/image'
-import {
-  BASE_URL,
-  DEEP_CLONE,
-  encodeBase64ImageTagviaFileReader,
-} from '../common/common'
+import { BASE_URL, DEEP_CLONE } from '../common/common'
 import '../style/home.css'
 
 export default function Home() {
@@ -60,7 +56,6 @@ export default function Home() {
   const [buttonBlock, setButtonBlock] = useState(true)
   const imageStore = useSelector((state) => state.image.imageFile)
   const dispatch = useDispatch()
-  console.log(image)
   const imgUpload = useCallback((image) => dispatch(imageUpload(image)), [
     dispatch,
   ])
@@ -132,17 +127,20 @@ export default function Home() {
       }
     }
     reader.readAsDataURL(file)
-    console.log(file)
-    fetch(BASE_URL + 'ip/uploadInfor', {
-      method: 'POST',
-      body: {
-        img: file,
-      },
-    }).then((response) => {
-      console.log('1')
-      console.log(response)
-    })
   }
+  // useEffect(() => {
+  //   if (image.length > 1) {
+  //     var formdata = new FormData()
+  //     formdata.append('img', image[1].img)
+  //     var requestOptions = {
+  //       method: 'POST',
+  //       body: formdata,
+  //     }
+  //     fetch(BASE_URL + 'ip/uploadInfor', requestOptions).then((response) => {
+  //       console.log(response)
+  //     })
+  //   }
+  // }, [image])
 
   const cardList = (imageStore) => {
     return imageStore.map((item, id) => {
@@ -153,8 +151,6 @@ export default function Home() {
         method: 'POST',
         body: item,
       }
-
-      console.log(requestOptions)
       // new Promise((res, rej) => {
       //   fetch(BASE_URL + 'ip/uploadInfor', requestOptions)
       //     .then((response) => response.json())

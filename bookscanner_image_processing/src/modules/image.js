@@ -9,6 +9,7 @@ const IMAGE_PROCESSING_CONTRAST = 'image/IMAGE_PROCESSING_CONTRAST'
 const IMAGE_PROCESSING_RESTORE = 'image/IMAGE_PROCESSING_RESTORE'
 const ADD_WATERMARK = 'image/ADD_WATERMARK'
 const FIND_IMAGE = 'image/FIND_IMAGE'
+const ADD_SIZE = 'image/ADD_SIZE'
 
 //Action Function
 export const imageDelete = (id) => ({ type: IMAGE_DELETE, id }) // 해당 id값을 가진 사진 전부 삭제
@@ -48,7 +49,6 @@ export const findImage = (images) => async (dispatch, getState) => {
       method: 'POST',
       body: formdata,
     }
-
     const requestImage = () => {
       return new Promise((res, rej) => {
         fetch(BASE_URL + 'ip/cutAndFind', requestOptions)
@@ -89,6 +89,12 @@ export const addWaterMark = (images) => async (dispatch, getState) => {
         fetch(BASE_URL + 'ip/cutAndAdd', requestOptions)
           .then((response) => response.json())
           .then((result) => {
+            dispatch({
+              type: ADD_SIZE,
+              id,
+              width: result.width,
+              height: result.height,
+            })
             return result
           })
           .then((result) => {
@@ -428,6 +434,18 @@ export default function image(state = initialState, action) {
           item.id === action.id + 1
             ? { ...item, imgPart: action.imgPart }
             : item
+        ),
+      }
+    case ADD_SIZE:
+      let sizes = {
+        width: action.width,
+        height: action.height,
+      }
+      console.log(action)
+      return {
+        ...state,
+        imageFile: state.imageFile.map((item) =>
+          item.id === action.id + 1 ? { ...item, size: sizes } : item
         ),
       }
     case IMAGE_DELETE:
