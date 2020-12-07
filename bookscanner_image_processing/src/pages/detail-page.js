@@ -2,7 +2,7 @@ import React, { useState, useRef, useCallback, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Button } from 'react-bootstrap'
 import '../style/detail.css'
-import { drawEraseSection, endPainting } from '../modules/detail'
+import { drawEraseSection } from '../modules/detail'
 import { useHistory } from 'react-router-dom'
 import { addBlur, addMosiac, addDeletion, addContrast } from '../modules/image'
 
@@ -20,6 +20,8 @@ export default function Detail() {
   const [constrast, setConstrast] = useState(50)
   const [mosaic, setMosaic] = useState(50)
   const [blur, setBlur] = useState(50)
+  const [backX, setBackX] = useState(0)
+  const [backY, setBackY] = useState(0)
   const dispatch = useDispatch()
   const [width, height] = [imageStore[0].size.width, imageStore[0].size.height]
 
@@ -47,6 +49,28 @@ export default function Detail() {
     setLocationStartY(y * 2)
   }
 
+  const endPainting = (event) => {
+    let x = 0
+    let y = 0
+    if (event.pageX || event.pageY) {
+      x = event.pageX
+      y = event.pageY
+    } else {
+      x =
+        event.clientX +
+        document.body.scrollLeft +
+        document.documentElement.scrollLeft
+      y =
+        event.clientY +
+        document.body.scrollTop +
+        document.documentElement.scrollTop
+    }
+    x -= event.target.offsetLeft
+    y -= event.target.offsetTop
+
+    setBackX(x * 2)
+    setBackY(y * 2)
+  }
   const endLocation = (event) => {
     let x = 0
     let y = 0
@@ -83,13 +107,16 @@ export default function Detail() {
     [dispatch]
   )
   const imgDeletion = useCallback(
-    (image, startX, startY, endX, endY, backX, backY) =>
-      dispatch(addDeletion(image, startX, startY, endX, endY, backX, backY)),
+    (image, id, startX, startY, endX, endY, backX, backY) =>
+      dispatch(
+        addDeletion(image, id, startX, startY, endX, endY, backX, backY)
+      ),
     [dispatch]
   )
-  const imgContrast = useCallback((image) => dispatch(addContrast(image)), [
-    dispatch,
-  ])
+  const imgContrast = useCallback(
+    (image, id, constrast) => dispatch(addContrast(image, id, constrast)),
+    [dispatch]
+  )
 
   const clickImgProcess = () => {
     if (checkMode === 6) {
@@ -115,8 +142,19 @@ export default function Detail() {
       //블라
     } else if (checkMode === 1) {
       //딜리션
+      imgDeletion(
+        imageDate,
+        id,
+        locationStartX,
+        locationStartY,
+        locationEndX,
+        locationEndY,
+        backX,
+        backY
+      )
     } else if (checkMode === 1) {
       //const
+      imgContrast(imageDate, id, constrast)
     }
   }
   console.log(imageStore)
@@ -246,7 +284,7 @@ export default function Detail() {
                 {checkMode === 1 ? (
                   <div className="adjust_content">
                     <img
-                      onClick={() => endPainting()}
+                      onClick={(e) => endPainting(e)}
                       src="../spoid.png"
                       className="adjust_content erase spoid "
                     />

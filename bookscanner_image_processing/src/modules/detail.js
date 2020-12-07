@@ -61,13 +61,19 @@ export const drawEraseSection = (width, height) => {
     canvas.addEventListener('mouseleave', stopPainting)
     canvas.addEventListener('contextmenu', handleCM)
   }
-  if (spoid) {
-    canvas.addEventListener('mousedown', endPainting)
-  }
+  // if (spoid) {
+  //   canvas.addEventListener('mousedown', endPainting)
+  // }
 
   if (saveBtn) {
     saveBtn.addEventListener('click', handleSaveClick)
   }
+}
+
+export const handleSaveClick = () => {
+  const canvas = document.getElementById('jsCanvas')
+  const image = canvas.toDataURL()
+  const link = document.createElement('a')
 }
 
 export const endPainting = (event) => {
