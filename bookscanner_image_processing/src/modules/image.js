@@ -34,6 +34,7 @@ export const downloadImage = (fileName, type) => {
             })
           })
         })
+
     //임시방편
     setTimeout(() => {
       res(imgArray)
@@ -49,6 +50,7 @@ export const findImage = (images) => async (dispatch, getState) => {
       method: 'POST',
       body: formdata,
     }
+
     const requestImage = () => {
       return new Promise((res, rej) => {
         fetch(BASE_URL + 'ip/cutAndFind', requestOptions)
@@ -455,9 +457,9 @@ export default function image(state = initialState, action) {
         // bufferImage: state.bufferImage.filter((v) => v.id !== action.id),
       }
     case IMAGE_PROCESSING_MOSAIC:
-      // console.log(action.url)
+      console.log(action.url)
       var file = dataURLtoFile(action.url)
-      // console.log(file)
+      console.log(file)
       return {
         ...state,
         // url: action.url,
@@ -466,7 +468,7 @@ export default function image(state = initialState, action) {
         ),
       }
     case IMAGE_PROCESSING_BLUR:
-      // console.log(action.url)
+      console.log(action.url)
       return {
         ...state,
         // url: action.url,
