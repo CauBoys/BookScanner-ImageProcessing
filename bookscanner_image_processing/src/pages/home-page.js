@@ -1,5 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react'
-import { NextButtons } from '../components/nextButton'
+import { useHistory } from 'react-router-dom'
+import { Button as Btn } from 'react-bootstrap'
 import {
   Button,
   Card,
@@ -19,18 +20,17 @@ import {
   addWaterMark,
   findImage,
 } from '../modules/image'
-import {
-  BASE_URL,
-  DEEP_CLONE,
-  encodeBase64ImageTagviaFileReader,
-} from '../common/common'
+import { BASE_URL, DEEP_CLONE } from '../common/common'
 import '../style/home.css'
 
 export default function Home() {
+  let imgX = 0
+  let imgY = 0
+
   const [imageList, setImageList] = useState()
   const [image, setImage] = useState([
     {
-      img: '',
+      img: [],
       id: 0,
       type_process: 'O',
       type_id: 0,
@@ -48,6 +48,7 @@ export default function Home() {
         value: 0,
       },
       imgPart: [],
+      size: {},
     },
   ])
   const [cutImage, setCutImage] = useState()
@@ -56,7 +57,6 @@ export default function Home() {
   const [buttonBlock, setButtonBlock] = useState(true)
   const imageStore = useSelector((state) => state.image.imageFile)
   const dispatch = useDispatch()
-
   const imgUpload = useCallback((image) => dispatch(imageUpload(image)), [
     dispatch,
   ])
@@ -82,6 +82,24 @@ export default function Home() {
     }
   }, [nextId.current])
 
+  const NextButtons = ({ path, name, id }) => {
+    const history = useHistory()
+    return (
+      <div>
+        <Btn
+          variant="primary"
+          onClick={() => {
+            imgWaterMark(imageStore).then(() => {
+              history.push(`${path}/${id}`)
+            })
+          }}
+        >
+          {name}
+        </Btn>
+      </div>
+    )
+  }
+
   const handleSaveClick = () => {
     for (var i = 0; i < nextId.current - 1; i++) {
       const link = document.createElement('a')
@@ -102,6 +120,7 @@ export default function Home() {
       newArr[0].img = file
       newArr[0].id = nextId.current
       newArr[0].url = reader.result
+
       setImage(newArr)
       let newValue = {
         id: nextId.current,
@@ -110,9 +129,45 @@ export default function Home() {
     }
     reader.readAsDataURL(file)
   }
+  // useEffect(() => {
+  //   if (image.length > 1) {
+  //     var formdata = new FormData()
+  //     formdata.append('img', image[1].img)
+  //     var requestOptions = {
+  //       method: 'POST',
+  //       body: formdata,
+  //     }
+  //     fetch(BASE_URL + 'ip/uploadInfor', requestOptions).then((response) => {
+  //       console.log(response)
+  //     })
+  //   }
+  // }, [image])
 
   const cardList = (imageStore) => {
     return imageStore.map((item, id) => {
+      const formdata = new FormData()
+
+      formdata.append('img', item)
+      const requestOptions = {
+        method: 'POST',
+        body: item,
+      }
+      // new Promise((res, rej) => {
+      //   fetch(BASE_URL + 'ip/uploadInfor', requestOptions)
+      //     .then((response) => response.json())
+      //     .then((result) => {
+      //       console.log(result)
+      //       return result
+      //     })
+      //     .then((result) => {
+      //       console.log(result)
+      //       console.log(newY)
+      //     })
+      //     .catch((err) => {
+      //       rej(err)
+      //     })
+      // })
+
       return (
         <Card className="Card" id={id}>
           <button
@@ -131,6 +186,8 @@ export default function Home() {
               path="/detail"
               name="Adjust Image"
               id={id}
+              // width={imgX}
+              // height={imgY}
             />
           </Card.Body>
         </Card>
@@ -173,7 +230,9 @@ export default function Home() {
               ) == true
             ) {
               imgWaterMark(imageStore)
-              handleSaveClick()
+              setTimeout(() => {
+                handleSaveClick()
+              }, 3000)
             } else {
               return false
             }

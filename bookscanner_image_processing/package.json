@@ -26,7 +26,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "proxy": "http://code-giraffe.iptime.org:39000/",
+  "proxy": "http://192.168.35.163:35050/",
   "eslintConfig": {
     "extends": [
       "react-app",

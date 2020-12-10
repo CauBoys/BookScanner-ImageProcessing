@@ -1,4 +1,4 @@
-import { BASE_URL, toDataUrl } from '../common/common'
+import { BASE_URL, toDataUrl, dataURLtoFile } from '../common/common'
 //Action Type
 const IMAGE_UPLOAD = 'image/IMAGE_UPLOAD'
 const IMAGE_DELETE = 'image/IMAGE_DELETE'
@@ -9,12 +9,37 @@ const IMAGE_PROCESSING_CONTRAST = 'image/IMAGE_PROCESSING_CONTRAST'
 const IMAGE_PROCESSING_RESTORE = 'image/IMAGE_PROCESSING_RESTORE'
 const ADD_WATERMARK = 'image/ADD_WATERMARK'
 const FIND_IMAGE = 'image/FIND_IMAGE'
+const ADD_SIZE = 'image/ADD_SIZE'
 
 //Action Function
 export const imageDelete = (id) => ({ type: IMAGE_DELETE, id }) // 해당 id값을 가진 사진 전부 삭제
 export const imageUpload = (image) => ({ type: IMAGE_UPLOAD, image })
 
 //Thunk
+export const downloadImage = (fileName, type) => {
+  return new Promise((res, rej) => {
+    let imgArray = []
+    type == 'element'
+      ? fetch(BASE_URL + `file/download/${fileName}`).then((result) => {
+          toDataUrl(result.url, function (myBase64) {
+            res(myBase64)
+          })
+        })
+      : fileName.forEach(async (item) => {
+          await fetch(BASE_URL + `file/download/${item}`).then((result) => {
+            toDataUrl(result.url, function (myBase64) {
+              imgArray.push(myBase64)
+            })
+          })
+        })
+
+    //임시방편
+    setTimeout(() => {
+      res(imgArray)
+    }, 5000)
+  })
+}
+
 export const findImage = (images) => async (dispatch, getState) => {
   images.forEach((image, id) => {
     var formdata = new FormData()
@@ -46,7 +71,6 @@ export const findImage = (images) => async (dispatch, getState) => {
       })
     }
     requestImage().then((req) => {
-      console.log(req)
       dispatch({ type: FIND_IMAGE, id, imgPart: req })
     })
   })
@@ -60,12 +84,17 @@ export const addWaterMark = (images) => async (dispatch, getState) => {
       method: 'POST',
       body: formdata,
     }
-
     const requestImage = () => {
       return new Promise((res, rej) => {
         fetch(BASE_URL + 'ip/cutAndAdd', requestOptions)
           .then((response) => response.json())
           .then((result) => {
+            dispatch({
+              type: ADD_SIZE,
+              id,
+              width: result.width,
+              height: result.height,
+            })
             return result
           })
           .then((result) => {
@@ -83,24 +112,24 @@ export const addWaterMark = (images) => async (dispatch, getState) => {
       })
     }
     requestImage().then((req) => {
-      dispatch({ type: ADD_WATERMARK, id, new_url: req })
+      let newFile = dataURLtoFile(req, 'addwatermark')
+      dispatch({ type: ADD_WATERMARK, file: newFile, id, new_url: req })
     })
   })
 }
 
 //blur mosiac deletion contrast
-export const addBlur = (image, startX, startY, endX, endY, value) => async (
+export const addBlur = (image, id, startX, startY, endX, endY, value) => async (
   dispatch,
   getState
 ) => {
   const formdata = new FormData()
-  formdata.append('img', image.img)
+  formdata.append('img', image[0].img)
   formdata.append('startX', startX)
   formdata.append('startY', startY)
   formdata.append('endX', endX)
   formdata.append('endY', endY)
   formdata.append('value', value)
-
   const requestOptions = {
     method: 'POST',
     body: formdata,
@@ -128,23 +157,28 @@ export const addBlur = (image, startX, startY, endX, endY, value) => async (
     })
   }
   requestImage().then((req) => {
-    dispatch({ type: IMAGE_PROCESSING_BLUR, id, new_url: req })
+    let newFile = dataURLtoFile(req, 'addBlur')
+    dispatch({ type: IMAGE_PROCESSING_BLUR, file: newFile, id, url: req })
   })
 }
 
-export const addMosiac = (image, startX, startY, endX, endY, value) => async (
-  dispatch,
-  getState
-) => {
+export const addMosiac = (
+  image,
+  id,
+  startX,
+  startY,
+  endX,
+  endY,
+  value
+) => async (dispatch, getState) => {
   const formdata = new FormData()
-  formdata.append('img', image.img)
+  formdata.append('img', image[0].img)
   formdata.append('startX', startX)
   formdata.append('startY', startY)
   formdata.append('endX', endX)
   formdata.append('endY', endY)
   formdata.append('value', value)
-
-  const requestOptions = {
+  var requestOptions = {
     method: 'POST',
     body: formdata,
   }
@@ -171,12 +205,14 @@ export const addMosiac = (image, startX, startY, endX, endY, value) => async (
     })
   }
   requestImage().then((req) => {
-    dispatch({ type: IMAGE_PROCESSING_MOSAIC, id, new_url: req })
+    let newFile = dataURLtoFile(req, 'addMosiac')
+    dispatch({ type: IMAGE_PROCESSING_MOSAIC, file: newFile, id, url: req })
   })
 }
 
 export const addDeletion = (
   image,
+  id,
   startX,
   startY,
   endX,
@@ -184,14 +220,15 @@ export const addDeletion = (
   backX,
   backY
 ) => async (dispatch, getState) => {
+  console.log(image, id, startX, startY, endX, endY, backX, backY)
   const formdata = new FormData()
-  formdata.append('img', image.img)
+  formdata.append('img', image[0].img)
   formdata.append('startX', startX)
   formdata.append('startY', startY)
   formdata.append('endX', endX)
   formdata.append('endY', endY)
-  formdata.append('endY', backX)
-  formdata.append('endY', backY)
+  formdata.append('backX', backX)
+  formdata.append('backY', backY)
 
   const requestOptions = {
     method: 'POST',
@@ -220,13 +257,16 @@ export const addDeletion = (
     })
   }
   requestImage().then((req) => {
-    dispatch({ type: IMAGE_PROCESSING_DELETEION, id, new_url: req })
+    let newFile = dataURLtoFile(req, 'addDeletion')
+    dispatch({ type: IMAGE_PROCESSING_DELETEION, file: newFile, id, url: req })
   })
 }
 
-export const addContrast = (image) => async (dispatch, getState) => {
+export const addContrast = (image, id, value) => async (dispatch, getState) => {
+  console.log(image, id, value)
   const formdata = new FormData()
-  formdata.append('img', image.img)
+  formdata.append('img', image[0].img)
+  formdata.append('value', value)
 
   const requestOptions = {
     method: 'POST',
@@ -235,7 +275,7 @@ export const addContrast = (image) => async (dispatch, getState) => {
 
   const requestImage = () => {
     return new Promise((res, rej) => {
-      fetch(BASE_URL + 'ip/cut', requestOptions)
+      fetch(BASE_URL + 'ip/contrast', requestOptions)
         .then((response) => response.json())
         .then((result) => {
           return result
@@ -255,60 +295,38 @@ export const addContrast = (image) => async (dispatch, getState) => {
     })
   }
   requestImage().then((req) => {
-    dispatch({ type: IMAGE_PROCESSING_CONTRAST, id, new_url: req })
+    let newFile = dataURLtoFile(req, 'addContrast')
+    dispatch({ type: IMAGE_PROCESSING_CONTRAST, file: newFile, id, url: req })
   })
 }
 
-export const downloadImage = (fileName, type) => {
-  return new Promise((res, rej) => {
-    let imgArray = []
-    type == 'element'
-      ? fetch(BASE_URL + `file/download/${fileName}`).then((result) => {
-          toDataUrl(result.url, function (myBase64) {
-            res(myBase64)
-          })
-        })
-      : fileName.forEach(async (item) => {
-          await fetch(BASE_URL + `file/download/${item}`).then((result) => {
-            toDataUrl(result.url, function (myBase64) {
-              imgArray.push(myBase64)
-            })
-          })
-        })
-    //임시방편
-    setTimeout(() => {
-      res(imgArray)
-    }, 5000)
-  })
-}
-
-export const processMosaic = (image) => async (dispatch, getState) => {
-  //모자이크 처리, c++로 image 정보 넘기고 결과를 다시 받아야함
-  // const result = mosaicImage(image)
-  const result = null // 임시
-  dispatch({ type: IMAGE_PROCESSING_MOSAIC, image, result })
-}
-export const processRestore = (id, type_process, type_id) => async (
-  dispatch,
-  getState
-) => {
-  const original = getState().bufferImage.filter(
-    (v) =>
-      v.id === id &&
-      v.type_process === type_process &&
-      v.type_id === type_id - 1
-  )
-  if (type_id === 0) {
-    type_process = 'O'
-  }
-  dispatch({
-    type: IMAGE_PROCESSING_RESTORE,
-    id,
-    type_process,
-    type_id,
-    original,
-  })
-}
+// export const processMosaic = (image) => async (dispatch, getState) => {
+//   //모자이크 처리, c++로 image 정보 넘기고 결과를 다시 받아야함
+//   // const result = mosaicImage(image)
+//   const result = null // 임시
+//   dispatch({ type: IMAGE_PROCESSING_MOSAIC, image, result })
+// }
+// export const processRestore = (id, type_process, type_id) => async (
+//   dispatch,
+//   getState
+// ) => {
+//   const original = getState().bufferImage.filter(
+//     (v) =>
+//       v.id === id &&
+//       v.type_process === type_process &&
+//       v.type_id === type_id - 1
+//   )
+//   if (type_id === 0) {
+//     type_process = 'O'
+//   }
+//   dispatch({
+//     type: IMAGE_PROCESSING_RESTORE,
+//     id,
+//     type_process,
+//     type_id,
+//     original,
+//   })
+// }
 //initialState 이런식으로 저장될 예정, 지금은 dummy data고 나중에 전부 지워야함
 //같은 이미지에 대한 다른 영상처리는 같은 id값, 다른 type_process(M, B, D, O), 다른 type_id값을 가짐
 //Restore는 각각의 기능별로(모자이크, 블러, deletion)의 뒤로가기 느낌 구현할 예정.
@@ -401,7 +419,7 @@ export default function image(state = initialState, action) {
         ...state,
         imageFile: state.imageFile.map((item) =>
           item.id === action.id + 1
-            ? { ...item, new_url: action.new_url }
+            ? { ...item, img: action.file, new_url: action.new_url }
             : item
         ),
       }
@@ -414,17 +432,61 @@ export default function image(state = initialState, action) {
             : item
         ),
       }
+    case ADD_SIZE:
+      let sizes = {
+        width: action.width,
+        height: action.height,
+      }
+      return {
+        ...state,
+        imageFile: state.imageFile.map((item) =>
+          item.id === action.id + 1 ? { ...item, size: sizes } : item
+        ),
+      }
     case IMAGE_DELETE:
       return {
         ...state,
-        imageFile: state.imageFile.filter((v) => v.id !== action.id),
-        // bufferImage: state.bufferImage.filter((v) => v.id !== action.id),
+        imageFile: state.imageFile.map((item) =>
+          item.id === action.id
+            ? { ...item, img: action.file, new_url: action.url }
+            : item
+        ),
       }
     case IMAGE_PROCESSING_MOSAIC:
       return {
         ...state,
-        imageFile: [...action.result],
-        bufferImage: [...state.bufferImage, action.image],
+        imageFile: state.imageFile.map((item) =>
+          item.id === action.id
+            ? { ...item, img: action.file, new_url: action.url }
+            : item
+        ),
+      }
+    case IMAGE_PROCESSING_BLUR:
+      return {
+        ...state,
+        imageFile: state.imageFile.map((item) =>
+          item.id === action.id
+            ? { ...item, img: action.file, new_url: action.url }
+            : item
+        ),
+      }
+    case IMAGE_PROCESSING_CONTRAST:
+      return {
+        ...state,
+        imageFile: state.imageFile.map((item) =>
+          item.id === action.id
+            ? { ...item, img: action.file, new_url: action.url }
+            : item
+        ),
+      }
+    case IMAGE_PROCESSING_DELETEION:
+      return {
+        ...state,
+        imageFile: state.imageFile.map((item) =>
+          item.id === action.id
+            ? { ...item, img: action.file, new_url: action.url }
+            : item
+        ),
       }
     case IMAGE_PROCESSING_RESTORE:
       return {

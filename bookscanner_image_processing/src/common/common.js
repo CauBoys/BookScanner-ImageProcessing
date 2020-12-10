@@ -1,4 +1,5 @@
-export const BASE_URL = 'http://code-giraffe.iptime.org:39000/'
+// export const BASE_URL = 'http://code-giraffe.iptime.org:35050/'
+export const BASE_URL = 'http://192.168.35.163:35050/'
 
 export const DEEP_CLONE = (obj) => {
   if (obj === null || typeof obj !== 'object') {
@@ -27,3 +28,21 @@ export const toDataUrl = (url, callback) => {
   xhr.responseType = 'blob'
   xhr.send()
 }
+
+export const dataURLtoFile = (dataurl, fileName) => {
+  var arr = dataurl.split(','),
+    mime = arr[0].match(/:(.*?);/)[1],
+    bstr = atob(arr[1]),
+    n = bstr.length,
+    u8arr = new Uint8Array(n)
+
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n)
+  }
+
+  return new File([u8arr], fileName, { type: mime })
+}
+
+//Usage example:
+// var file = dataURLtoFile('data:text/plain;base64,aGVsbG8gd29ybGQ=', 'hello.txt')
+// console.log(file)
