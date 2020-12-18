@@ -1,0 +1,1 @@
+./runner/ImageAdd.exe $1 $2
